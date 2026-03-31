@@ -1,0 +1,14 @@
+requests
+newspaper3k
+moviepy
+gtts
+python-dotenv
+moviepy==1.0.3
+imageio
+imageio-ffmpeg
+numpy
+edge_tts
+langdetect
+pillow==9.5.0
+
+
