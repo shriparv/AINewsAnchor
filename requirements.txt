@@ -1,4 +1,6 @@
 requests
+openai
+python-dateutil
 newspaper3k
 moviepy
 gtts
@@ -10,5 +12,11 @@ numpy
 edge_tts
 langdetect
 pillow==9.5.0
-
-
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
+kokoro
+soundfile
+torch
+numpy
+piper-tts
