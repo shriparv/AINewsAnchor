@@ -11,13 +11,57 @@ if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
 from modules.fetch_news import fetch_articles
 from modules.extract import extract_text
 from modules.summarize import summarize, generate_video_metadata
-from modules.slides import create_slide
+from modules.slides import create_layered_slide, create_intro_slide
 from modules.tts import generate_tts
 from modules.video import create_video
 from modules.youtube import upload_video
 from modules.history import mark_seen
 import time
+import shutil
 from config import NUM_ARTICLES, DEDUPLICATE_NEWS
+
+
+def archive_workspace():
+    """Moves temporary assets to an archive and maintains last 3 runs."""
+    archive_base = "archives/lastpost"
+    os.makedirs(archive_base, exist_ok=True)
+    
+    # ── Rotation logic (3 -> gone, 2 -> 3, 1 -> 2) ──
+    p3 = os.path.join(archive_base, "post_3")
+    p2 = os.path.join(archive_base, "post_2")
+    p1 = os.path.join(archive_base, "post_1")
+    
+    print("\n📦 Archiving workspace...")
+    
+    if os.path.exists(p3):
+        shutil.rmtree(p3)
+    if os.path.exists(p2):
+        os.rename(p2, p3)
+    if os.path.exists(p1):
+        os.rename(p1, p2)
+        
+    os.makedirs(p1, exist_ok=True)
+    
+    # ── Move current output to post_1 ──
+    dirs_to_archive = ["output/slides", "output/images", "output/audio", "output/final"]
+    for d in dirs_to_archive:
+        if os.path.exists(d) and os.listdir(d):
+            try:
+                target = os.path.join(p1, os.path.basename(d))
+                shutil.move(d, target)
+                os.makedirs(d, exist_ok=True) # Recreate empty for next run
+                print(f"  ✅ Archived {d} -> lastpost/post_1")
+            except Exception as e:
+                print(f"  ⚠️ Could not archive {d}: {e}")
+
+    # Remove moviepy temp files if they exist in the root
+    for f in os.listdir("."):
+        if f.startswith("TEMP_MPY") or f.endswith(".mp4.25") or f.endswith("wvf_snd.mp4"):
+            try:
+                os.remove(f)
+                print(f"  ✅ Removed temp file: {f}")
+            except:
+                pass
 
 
 def split_text(text, max_words=25):
@@ -62,8 +106,8 @@ async def process_article(article, i, accent_color):
     try:
         summary = summarize(article["title"], text)
 
-        # Create slide image (single composite)
-        slide_path = create_slide(article["title"], summary, i, image_path=local_img_path, accent_color=accent_color)
+        # Create layered slide (background + transparent panel)
+        bg_path, panel_path = create_layered_slide(article["title"], summary, i, image_path=local_img_path, accent_color=accent_color)
 
         # 🎙️ Generate TTS (say the headline, then the summary)
         tts_text = f"{article['title']}. {summary}"
@@ -78,53 +122,57 @@ async def process_article(article, i, accent_color):
         "url": article["url"],
         "summary": summary,
         "local_img_path": local_img_path,
-        "slide_path": slide_path,
         "audio_path": audio_path,
+        "layered_paths": (bg_path, panel_path),
+        "image_path": local_img_path
     }
 
 async def main():
+    start_time = time.time()
     articles = fetch_articles()
 
     if not articles:
         print("❌ Error: No articles found! Please check your NewsAPI configuration or parameters.")
         return
 
-    slides = []
-    audios = []
     description_lines = ["🔥 Daily Tech News Update! 🔥\n"]
     raw_content_for_metadata = ""
     thumbnail_image = None
 
     # Select a random theme color for this run
-    THEME_COLORS = [
-        (0, 255, 255),   # Neon Cyan
-        (57, 255, 20),   # Neon Green
-        (255, 0, 255),   # Neon Pink
-        (191, 0, 255),   # Electric Purple
-        (255, 170, 0),   # Neon Gold
-        (0, 180, 255)    # Sky Blue
-    ]
-    accent_color = random.choice(THEME_COLORS)
+    THEME_COLORS = [(0, 255, 255), (57, 255, 20), (255, 0, 255), (191, 0, 255), (255, 170, 0)]
+    
+    # ── 1. ARTICLE PROCESSING ──
+    results = []
+    # Use a fixed palette of neon accent colors
+    accents = [(0, 180, 255), (255, 30, 200), (0, 255, 180), (255, 150, 0)]
+    
+    for i, article in enumerate(articles[:NUM_ARTICLES]):
+        color = accents[i % len(accents)]
+        res = await process_article(article, i, color)
+        if res:
+            results.append(res)
 
-    start_time = time.time()
-    
-    # 🚀 Process all articles in PARALLEL
-    tasks = [process_article(article, i, accent_color) for i, article in enumerate(articles[:NUM_ARTICLES])]
-    results = await asyncio.gather(*tasks)
-    
-    # Filter out failed extractions
-    results = [r for r in results if r is not None]
-    
     if not results:
         print("Error: All articles failed during processing (could not extract text). Aborting video creation.")
         return
-        
-    results.sort(key=lambda x: x["index"]) # Maintain original order
+
+    # ── 2. INTRO COLLAGE SLIDE ──
+    print("\n🎬 Generating Intro Collage Slide...")
+    intro_bg, intro_panel = create_intro_slide(results)
+    intro_text = f"Welcome to today's news update. I'm your AI anchor, and here are the {len(results)} top stories we are covering today."
+    intro_audio, _ = await generate_tts(intro_text, "intro")
     
+    # Prepend Intro to the sequences
+    final_layered_slides = [(intro_bg, intro_panel)] + [r["layered_paths"] for r in results]
+    final_audios = [intro_audio] + [r["audio_path"] for r in results]
+
+    # ── 3. VIDEO GENERATION ──
+    print(f"\n🚀 Creating Final Video ({len(final_layered_slides)} slides total)...")
+    create_video(final_layered_slides, final_audios)
+
+    # ── 4. METADATA & UPLOAD ──
     for r in results:
-        slides.append(r["slide_path"])
-        audios.append(r["audio_path"])
-        
         description_lines.append(f"📰 {r['title']}")
         description_lines.append(f"👉 {r['summary']}\n")
         raw_content_for_metadata += f"Headline: {r['title']}\nSummary: {r['summary']}\n\n"
@@ -133,9 +181,6 @@ async def main():
             thumbnail_image = r["local_img_path"]
 
     print(f"✅ AI Processing Complete in {time.time() - start_time:.2f} seconds.")
-    
-    # 🎬 Build video with transitions
-    create_video(slides, audios)
 
     print("\n🧠 Brainstorming AI Metadata (Catchy Title & SEO Tags)...")
     ai_title, ai_tags = generate_video_metadata(raw_content_for_metadata)
@@ -156,10 +201,15 @@ async def main():
     with open("output/final/description.txt", "w", encoding="utf-8") as f:
         f.write(desc_text)
 
-    print(f"\n🎬 Video Pipeline Complete. Authenticating YouTube: '{ai_title}'")
+    # Ensure title is within YouTube's 100-char limit
+    final_title = ai_title.strip()
+    if len(final_title) > 95:
+        final_title = final_title[:92] + "..."
+    
+    print(f"\n🎬 Video Pipeline Complete. Authenticating YouTube: '{final_title}'")
     upload_video(
         file_path="output/final/technews.mp4",
-        title=ai_title,
+        title=final_title,
         description=desc_text,
         tags=final_tags,
         thumbnail_path=thumbnail_image
@@ -170,6 +220,9 @@ async def main():
         for r in results:
             mark_seen(r["url"])
         print(f"📖 History depth: {len(results)} new articles added to permanent record.")
+
+    # 📦 Archive Workspace
+    archive_workspace()
 
 
 

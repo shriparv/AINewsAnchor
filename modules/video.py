@@ -1,5 +1,6 @@
 from moviepy.editor import *
 import random
+import math
 
 from config import SLIDE_DURATION, VIDEO_SIZE
 
@@ -95,73 +96,77 @@ TRANSITION_NAMES = [
 # =========================
 # KEN BURNS (position-based, no resize)
 # =========================
-def apply_ken_burns(clip, duration):
-    """
-    Subtle slow pan instead of resize — nearly zero performance cost.
-    Drifts the image slightly downward over the duration.
-    """
-    drift = 15  # pixels to drift over the full duration
-    def pos(t):
-        progress = t / duration
-        return ("center", int(-drift * progress))
-    return clip.set_position(pos)
+def _ease_out_elastic(t):
+    """Elastic overshoot easing for 'springy' professional motion."""
+    if t == 0: return 0
+    if t == 1: return 1
+    p = 0.3
+    s = p / 4
+    return (2**(-10 * t) * math.sin((t - s) * (2 * math.pi) / p) + 1)
 
-
-# =========================
-# ANIMATE A SINGLE SLIDE
-# =========================
-def animate_clip(slide_img, audio_clip, transition_fx, transition_name):
-    """Creates a single animated slide clip with Ken Burns + transitions."""
+def animate_layered_slide(bg_img, panel_img, audio_clip, is_intro=False):
+    """
+    Creates a layered animated slide where the background and panel move independently.
+    Uses 'parallax-lite' and elastic easing for a high-end feel.
+    """
     # Dynamic duration: config value or auto-sync with audio + buffer
     duration = SLIDE_DURATION if SLIDE_DURATION is not None else (audio_clip.duration + 0.5)
-    trans_dur = min(0.6, duration * 0.15)  # Transition takes ~15% of clip, max 0.6s
+    
+    # ── Background Layer (Slow Ken Burns) ──
+    bg = ImageClip(bg_img).set_duration(duration)
+    drift = 25 if not is_intro else 40
+    def bg_pos(t):
+        return ("center", int(-drift * (t / duration)))
+    bg = bg.set_position(bg_pos)
 
-    # Base slide
-    base = ImageClip(slide_img).set_duration(duration)
+    # ── Panel Layer (Elastic Entrance) ──
+    panel = ImageClip(panel_img, transparent=True).set_duration(duration)
+    intro_dur = 0.8 # Duration of the entrance animation
+    
+    def panel_pos(t):
+        if t < intro_dur:
+            progress = _ease_out_elastic(t / intro_dur)
+            # Starts off-screen bottom, springs to center
+            return ("center", int(H * (1 - progress)))
+        return ("center", 0)
 
-    # Ken Burns subtle pan (position-based, not resize-based)
-    base = apply_ken_burns(base, duration)
+    panel = panel.set_position(panel_pos).fadein(0.2)
 
-    # Apply the randomized transition effect
-    base = transition_fx(base, duration, trans_dur)
-
-    # Compose to exact video size
-    composite = CompositeVideoClip([base], size=VIDEO_SIZE).set_duration(duration)
+    # ── Composite ──
+    composite = CompositeVideoClip([bg, panel], size=VIDEO_SIZE).set_duration(duration)
     composite = composite.set_audio(audio_clip)
 
-    print(f"    🎬 Transition: {transition_name}")
+    print(f"    🎭 Applied Animation: {'Elastic Intro Collage' if is_intro else 'Elastic Parallax Entrance'}")
     return composite
 
 
 # =========================
 # BUILD FULL VIDEO
 # =========================
-def create_video(slides, audios):
+def create_video(layered_slides, audios):
     """
-    Creates the final video from a list of slide image paths and audio paths.
-    Each slide gets a random (non-repeating) transition effect.
+    Creates the final video from a list of (bg_path, panel_path) tuples and audio paths.
     """
     clips = []
-    last_fx_index = -1  # Track last used transition to avoid consecutive repeats
-
-    for i, (slide_img, audio_path) in enumerate(zip(slides, audios)):
+    
+    for i, ((bg, panel), audio_path) in enumerate(zip(layered_slides, audios)):
         audio_clip = AudioFileClip(audio_path)
-
-        # Pick a random transition, ensuring no consecutive repeats
-        available = list(range(len(TRANSITIONS)))
-        if last_fx_index in available and len(available) > 1:
-            available.remove(last_fx_index)
-        fx_index = random.choice(available)
-        last_fx_index = fx_index
-
-        clip = animate_clip(slide_img, audio_clip, TRANSITIONS[fx_index], TRANSITION_NAMES[fx_index])
+        
+        # Check if this is the intro slide (usually the first one)
+        is_intro = (i == 0)
+        
+        clip = animate_layered_slide(bg, panel, audio_clip, is_intro=is_intro)
         clips.append(clip)
+        
+    if not clips:
+        print("⚠️ Warning: No video clips were generated. Skipping video concatenation.")
+        return
 
     # Concatenate with slight overlap for smooth blending
     final = concatenate_videoclips(
         clips,
         method="compose",
-        padding=-0.4  # 🔥 Smooth overlap transitions
+        padding=-0.3  # 🔥 Smother overlap transitions
     )
 
     # 🎵 Background music
@@ -177,11 +182,13 @@ def create_video(slides, audios):
         except Exception as e:
             print(f"⚠️ Warning: Could not process background music: {e}")
 
-    # 🖥️ GPU / CPU encoding
+    # 🖥️ GPU / CPU encoding (Robust check via nvidia-smi)
+    import subprocess
+    has_gpu = False
     try:
-        import torch
-        has_gpu = torch.cuda.is_available()
-    except ImportError:
+        subprocess.run(["nvidia-smi"], capture_output=True)
+        has_gpu = True
+    except:
         has_gpu = False
 
     if has_gpu:
