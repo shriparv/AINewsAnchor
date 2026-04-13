@@ -4,3 +4,10 @@ __pycache__/
 .env
 output/
 .DS_Store
+
+client_secret*.json
+token.json
+token.pickle
+
+*.mp3
+*.onnx
