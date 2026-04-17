@@ -173,7 +173,7 @@ async def main():
     intro_audio, _ = await generate_tts(intro_text, "intro", voice_override=session_voice)
     
     # Generate Outro
-    outro_text = "Please like, subscribe, and comment your views on this channel!"
+    outro_text = "Please like 👍, subscribe ❤️, and comment 💬 your views on this channel!"
     outro_audio, _ = await generate_tts(outro_text, "outro", voice_override=session_voice)
 
     total_duration = AudioFileClip(intro_audio).duration + AudioFileClip(outro_audio).duration
@@ -200,8 +200,8 @@ async def main():
         r["layered_paths"] = (bg_p, frame_p, text_p)
 
     print("🎬 Generating Intro and Outro Slides...")
-    from modules.slides import create_titles_slide
-    intro_bg, intro_frame, intro_text = create_titles_slide(results)
+    from modules.slides import create_intro_slide
+    intro_bg, intro_frame, intro_text = create_intro_slide(results)
     
     outro_bg, outro_frame, outro_text_img = create_layered_slide(
         "Thank You For Watching!", 

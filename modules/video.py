@@ -170,9 +170,8 @@ def animate_layered_slide(bg_img, frame_img, text_img=None, audio_clip=None, is_
         
         # We start the reveal shortly after the slide begins entering
         reveal_start = 0.2
-        # Finish the reveal by ~60% of the slide duration so it stays ahead of the speaker
-        reveal_dur = max(1.0, duration * 0.6) 
-        if reveal_dur > duration - 1.0: reveal_dur = max(1.0, duration - 1.0)
+        # Sync the reveal duration precisely to the pacing of the TTS voice
+        reveal_dur = max(1.0, duration - reveal_start - 0.3)
         
         def wipe_mask(t):
             if t < reveal_start:

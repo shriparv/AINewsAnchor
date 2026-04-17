@@ -415,10 +415,10 @@ def create_layered_slide(title, text, index, image_path=None, accent_color=(0, 1
     divider_gap = 30  # Space for the divider between headline & body
 
     # ── Adaptive Typography ──
-    max_title_size = 64
-    max_body_size = 42
-    min_title_size = 36
-    min_body_size = 24
+    max_title_size = 90
+    max_body_size = 60
+    min_title_size = 40
+    min_body_size = 30
     title_size = max_title_size
     body_size = max_body_size
 
@@ -459,9 +459,13 @@ def create_layered_slide(title, text, index, image_path=None, accent_color=(0, 1
 
     if len(body_lines) > max_body_lines:
         body_lines = body_lines[:max_body_lines]
-        # Add ellipsis to last line
         if body_lines:
             body_lines[-1] = body_lines[-1].rstrip() + "..."
+            
+    # Center Vertically
+    actual_text_h = (len(title_lines) * lh_title) + divider_gap + (len(body_lines) * lh_body)
+    if actual_text_h < available_h:
+        cursor_y += (available_h - actual_text_h) // 2
 
     # ── Render Headline ──
     # Use the enhanced color logic to ensure visibility
