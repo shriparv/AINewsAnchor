@@ -88,9 +88,9 @@ def download_image(url: str, output_path: str, retries=2, delay=3) -> str:
                 print(f"Warning: Could not download image {url} after {retries} attempts ({e})")
                 return None
 
-async def process_article(article, i, accent_color, voice):
+async def process_article(article, i, total, accent_color, voice):
     """Processes a single article: extract, download image, summarize, create slide, and generate TTS."""
-    print(f"Processing ({i+1}/{config.NUM_ARTICLES}): {article['title']}")
+    print(f"⚡ Processing ({i+1}/{total}): {article['title']}")
 
     text = extract_text(article["url"])
     if not text:
@@ -149,32 +149,38 @@ async def main():
     if session_voice:
         print(f"🎙️ Selected Session Voice: {session_voice.upper()}")
 
-    # ── 1. ARTICLE PROCESSING ──
-    results = []
-    # Use a fixed palette of neon accent colors
+    # ── 1. ARTICLE PROCESSING (Parallel) ──
     accents = [(0, 180, 255), (255, 30, 200), (0, 255, 180), (255, 150, 0)]
     random.shuffle(accents)
     
-    for i, article in enumerate(articles[:config.NUM_ARTICLES]):
-        color = accents[i % len(accents)]
-        res = await process_article(article, i, color, session_voice)
-        if res:
-            results.append(res)
+    article_slice = articles[:config.NUM_ARTICLES]
+    total = len(article_slice)
+    tasks = [
+        process_article(article, i, total, accents[i % len(accents)], session_voice)
+        for i, article in enumerate(article_slice)
+    ]
+    print(f"\n⚡ Processing {total} articles in PARALLEL...")
+    raw_results = await asyncio.gather(*tasks)
+    results = [r for r in raw_results if r is not None]  # Filter failed articles
+    # Sort by original index to preserve order
+    results.sort(key=lambda r: r["index"])
 
     if not results:
         print("Error: All articles failed during processing (could not extract text). Aborting video creation.")
         return
 
-    # ── 2. DURATION CALCULATION & ORIENTATION ──
+    # ── 2. INTRO + OUTRO TTS (Parallel with duration calc) ──
     from moviepy.editor import AudioFileClip
-    
-    # Generate Combined Intro
-    intro_text = f"Welcome to today's news update. Here are the {len(results)} top stories we are covering today."
-    intro_audio, _ = await generate_tts(intro_text, "intro", voice_override=session_voice)
-    
-    # Generate Outro
-    outro_text = "Please like 👍, subscribe ❤️, and comment 💬 your views on this channel!"
-    outro_audio, _ = await generate_tts(outro_text, "outro", voice_override=session_voice)
+
+    intro_tts_text = f"Welcome to today's news update. Here are the {len(results)} top stories we are covering today."
+    outro_tts_text = "Please like, subscribe, and comment your views on this channel!"
+
+    print("\n🎙️ Generating Intro + Outro TTS in parallel...")
+    (intro_audio, _), (outro_audio, _) = await asyncio.gather(
+        generate_tts(intro_tts_text, "intro", voice_override=session_voice),
+        generate_tts(outro_tts_text, "outro", voice_override=session_voice),
+    )
+    outro_text = outro_tts_text
 
     total_duration = AudioFileClip(intro_audio).duration + AudioFileClip(outro_audio).duration
     for r in results:
@@ -189,30 +195,35 @@ async def main():
         print("📐 Duration <= 3.0 min: Staying in PORTRAIT mode.")
         config.VIDEO_SIZE = config.SIZE_PORTRAIT
 
-    # ── 3. SLIDE GENERATION ──
-    print("\n🎬 Generating Slides...")
-    for r in results:
-        bg_p, frame_p, text_p = create_layered_slide(
-            r["title"], r["summary"], r["index"], 
-            image_path=r["local_img_path"], 
-            accent_color=r["accent_color"]
-        )
-        r["layered_paths"] = (bg_p, frame_p, text_p)
+    # ── 3. SLIDE GENERATION (Parallel via threads) ──
+    print("\n🎬 Generating Slides in PARALLEL...")
 
-    print("🎬 Generating Intro and Outro Slides...")
-    from modules.slides import create_intro_slide
-    intro_bg, intro_frame, intro_text = create_intro_slide(results)
-    
-    outro_bg, outro_frame, outro_text_img = create_layered_slide(
-        "Thank You For Watching!", 
-        outro_text, 
-        "outro", 
-        image_path=None, 
-        accent_color=(0, 255, 200)
+    async def generate_slide(r):
+        bg_p, frame_p, text_p = await asyncio.to_thread(
+            create_layered_slide,
+            r["title"], r["summary"], r["index"],
+            r["local_img_path"], r["accent_color"]
+        )
+        return r["index"], (bg_p, frame_p, text_p)
+
+    slide_results = await asyncio.gather(*[generate_slide(r) for r in results])
+    slide_map = dict(slide_results)
+    for r in results:
+        r["layered_paths"] = slide_map[r["index"]]
+
+    print("🎬 Generating Intro + Outro Slides in parallel...")
+    from modules.slides import create_titles_slide
+
+    (intro_bg, intro_frame, intro_text_layer), (outro_bg, outro_frame, outro_text_img) = await asyncio.gather(
+        asyncio.to_thread(create_titles_slide, results),
+        asyncio.to_thread(
+            create_layered_slide,
+            "Thank You For Watching!", outro_text, "outro", None, (0, 255, 200)
+        ),
     )
     
     # Prepend Intro and append Outro sequence
-    final_layered_slides = [(intro_bg, intro_frame, intro_text)] + [r["layered_paths"] for r in results] + [(outro_bg, outro_frame, outro_text_img)]
+    final_layered_slides = [(intro_bg, intro_frame, intro_text_layer)] + [r["layered_paths"] for r in results] + [(outro_bg, outro_frame, outro_text_img)]
     final_audios = [intro_audio] + [r["audio_path"] for r in results] + [outro_audio]
 
     # ── 4. VIDEO GENERATION ──

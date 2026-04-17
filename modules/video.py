@@ -181,18 +181,31 @@ def animate_layered_slide(bg_img, frame_img, text_img=None, audio_clip=None, is_
             else:
                 return (t - reveal_start) / reveal_dur
 
-        # Wipe effect keeping the original text alpha mask intact!
-        def text_wipe_fl_mask(gf, t):
-            mask_frame = gf(t).copy()
-            progress = wipe_mask(t)
-            h = mask_frame.shape[0]
-            cutoff = int(h * progress)
-            if cutoff < h:
-                mask_frame[cutoff:, :] = 0.0
-            return mask_frame
-
         import numpy as np
         if text_clip.mask is not None:
+            # Analyze mask to find precise vertical boundaries of the text
+            mask_data = text_clip.mask.get_frame(0)
+            row_maxes = mask_data.max(axis=1)
+            y_indices = np.where(row_maxes > 0)[0]
+            
+            if len(y_indices) > 0:
+                y_min = y_indices[0]
+                y_max = y_indices[-1]
+            else:
+                y_min = 0
+                y_max = mask_data.shape[0]
+
+            def text_wipe_fl_mask(gf, t):
+                mask_frame = gf(t).copy()
+                progress = wipe_mask(t)
+                
+                # Map progress to exact text bounds so we don't 'wipe' empty space and lag
+                current_y = y_min + int((y_max - y_min) * progress)
+                
+                if current_y < mask_frame.shape[0]:
+                    mask_frame[current_y:, :] = 0.0
+                return mask_frame
+
             text_clip.mask = text_clip.mask.fl(text_wipe_fl_mask)
             
         layers.append(text_clip)

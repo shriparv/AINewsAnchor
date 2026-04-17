@@ -221,7 +221,7 @@ def create_intro_slide(articles):
     draw_styled_text(draw, ((sw - tw) // 2, 100), title_text, title_font, (0, 255, 200, 255))
 
     # Grid logic
-    valid_images = [a["image_path"] for a in articles if a.get("image_path") and os.path.exists(a["image_path"])]
+    valid_images = [a["local_img_path"] for a in articles if a.get("local_img_path") and os.path.exists(a["local_img_path"])]
     if valid_images:
         num = len(valid_images)
         cols = 2 if num <= 4 else 3
@@ -293,14 +293,40 @@ def create_titles_slide(results):
     
     list_font = load_font(FONT_PATH, list_font_size)
     for i, r in enumerate(results):
+        thumb_img = None
+        thumb_w, thumb_h = 0, 0
+        
+        if r.get("local_img_path") and os.path.exists(r["local_img_path"]):
+            try:
+                base_h = 80 if len(results) <= 5 else 60
+                base_w = int(base_h * (16/9))
+                t_base = Image.open(r["local_img_path"]).convert("RGBA")
+                t_base = ImageOps.fit(t_base, (base_w, base_h), method=Image.Resampling.LANCZOS)
+                mask = Image.new("L", (base_w, base_h), 0)
+                ImageDraw.Draw(mask).rounded_rectangle((0, 0, base_w, base_h), radius=8, fill=255)
+                t_base.putalpha(mask)
+                thumb_img = t_base
+                thumb_w, thumb_h = base_w, base_h
+            except Exception:
+                pass
+                
+        text_x = 100 + thumb_w + 20 if thumb_img else 100
+        max_w = sw - text_x - 50
+        
         bullet_text = f"{i+1}. {r['title']}"
-        lines = wrap_text(bullet_text, list_font, sw - 150, draw)
+        lines = wrap_text(bullet_text, list_font, max_w, draw)
+        
+        lh = draw.textbbox((0, 0), "Ay", font=list_font)[3] + 8
+        total_text_h = len(lines) * lh
+        
+        if thumb_img:
+            panel.paste(thumb_img, (100, y + max(0, (total_text_h - thumb_h) // 2)), thumb_img)
+            
         for line in lines:
-            draw_styled_text(draw, (100, y), line, list_font, (230, 230, 235, 255))
-            lh = draw.textbbox((0, 0), "Ay", font=list_font)[3] + 8
+            draw_styled_text(draw, (text_x, y), line, list_font, (230, 230, 235, 255))
             y += lh
-            y += 10
-        y += 15
+            y += 5
+        y += 20
         if y > sh - 100: break
 
     panel_path = "output/slides/titles_panel.png"

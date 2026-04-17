@@ -5,7 +5,7 @@ DEDUPLICATE_NEWS = True
 
 # 📰 NEWS VARIETY
 # Categories: technology, business, entertainment, general, health, science, sports
-NEWS_CATEGORIES = ["technology"]
+NEWS_CATEGORIES = ["technology","Artificial Intelligence","Science","Software","Technology","Robotics","Gaming","Cloud Services"]
 RANDOMIZE_CATEGORY = True
 CURRENT_CATEGORY = random.choice(NEWS_CATEGORIES) if RANDOMIZE_CATEGORY else "technology"
 SLIDE_DURATION = None  # Set to None for auto-sync with audio length, or a fixed number of seconds
@@ -20,7 +20,7 @@ LLM_URL = "http://127.0.0.1:11434/api/generate"
 # 🎙️ TTS CONFIGURATION
 # Options: "edge" (free), "openai" (paid), "eleven" (paid/premium), "kokoro" (local/high-quality), "piper" (local/fast)
 TTS_PROVIDER = "kokoro" 
-RANDOMIZE_VOICE = True 
+RANDOMIZE_VOICE = False 
 
 
 # Professional Voice Recommendations:
@@ -31,7 +31,7 @@ TTS_VOICE_ELEVEN = "Adam"
 TTS_VOICE_PIPER = "en_US-lessac-medium"
 
 # Kokoro: "af_heart" (Human/Warm), "af_bella" (Clear/Narrator), "am_adam" (Deep/Male)
-TTS_VOICE_KOKORO = "af_heart"
+TTS_VOICE_KOKORO = "am_adam"
 
 OPENAI_API_KEY = ""
 ELEVENLABS_API_KEY = ""
