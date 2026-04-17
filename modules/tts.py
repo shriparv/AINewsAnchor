@@ -3,10 +3,16 @@ import requests
 import os
 import json
 import asyncio
+import random
 from langdetect import detect, LangDetectException
-from config import TTS_PROVIDER, OPENAI_API_KEY, ELEVENLABS_API_KEY, TTS_VOICE_OPENAI, TTS_VOICE_ELEVEN, TTS_VOICE_KOKORO, TTS_VOICE_PIPER
+from config import (
+    TTS_PROVIDER, OPENAI_API_KEY, ELEVENLABS_API_KEY, 
+    TTS_VOICE_OPENAI, TTS_VOICE_ELEVEN, TTS_VOICE_KOKORO, TTS_VOICE_PIPER,
+    RANDOMIZE_VOICE
+)
 
 logger = logging.getLogger(__name__)
+
 
 # =========================
 # CONFIG
@@ -42,8 +48,28 @@ STYLE_MAP = {
 }
 
 # =========================
+# RANDOM VOICE OPTIONS
+# =========================
+VOICES_KOKORO = ["af_heart", "af_bella", "af_nicole", "af_sarah", "am_adam", "am_michael", "bf_alice", "bf_emma", "bm_george", "bm_lewis"]
+VOICES_OPENAI = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"]
+VOICES_ELEVEN = ["Adam", "Antoni", "Nicole", "Rachel", "Domi", "Bella", "Arnold"]
+VOICES_PIPER  = ["en_US-lessac-medium"]
+
+
+
+def get_random_voice(provider=None):
+    """Returns a random voice for the current or specified provider."""
+    p = (provider or TTS_PROVIDER).lower()
+    if p == "kokoro": return random.choice(VOICES_KOKORO)
+    if p == "openai": return random.choice(VOICES_OPENAI)
+    if p == "eleven": return random.choice(VOICES_ELEVEN)
+    if p == "piper": return random.choice(VOICES_PIPER)
+    return None
+
+# =========================
 # VOICE SELECTION
 # =========================
+
 def pick_voice(text: str) -> tuple[str, str | None]:
     """
     Detect language from text and return (voice, style).
@@ -88,19 +114,20 @@ async def generate_edge_tts(text: str, voice: str, audio_path: str, json_path: s
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(word_timings, f, indent=2, ensure_ascii=False)
 
-async def generate_openai_tts(text: str, audio_path: str):
+async def generate_openai_tts(text: str, audio_path: str, voice: str = TTS_VOICE_OPENAI):
     from openai import AsyncOpenAI
     client = AsyncOpenAI(api_key=OPENAI_API_KEY)
     response = await client.audio.speech.create(
         model="tts-1",
-        voice=TTS_VOICE_OPENAI,
+        voice=voice,
         input=text
     )
     await response.astream_to_file(audio_path)
 
-async def generate_elevenlabs_tts(text: str, audio_path: str):
+async def generate_elevenlabs_tts(text: str, audio_path: str, voice: str = TTS_VOICE_ELEVEN):
     # We use direct request to avoid bloated dependencies in simple scripts
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{TTS_VOICE_ELEVEN}"
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice}"
+
     headers = {
         "xi-api-key": ELEVENLABS_API_KEY,
         "Content-Type": "application/json"
@@ -131,11 +158,13 @@ async def generate_kokoro_tts(text: str, voice: str, audio_path: str):
     # Lazy initialisation of the pipeline (singleton)
     if K_PIPELINE is None:
         logger.info("⚡ Loading Kokoro TTS Pipeline (this occurs once per session)...")
-        # 'a' = American English, 'b' = British English
+        # Silence non-critical HF Hub warnings
+        os.environ["HF_HUB_DISABLE_SYMLINKS_WARNING"] = "1"
+        
         import torch
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         logger.info(f"Kokoro utilizing device: {device.upper()}")
-        K_PIPELINE = KPipeline(lang_code='a', device=device) 
+        K_PIPELINE = KPipeline(lang_code='a', device=device, repo_id='hexgrad/Kokoro-82M') 
 
     # Generate audio chunks
     generator = K_PIPELINE(text, voice=voice, speed=1.0)
@@ -194,7 +223,7 @@ async def generate_piper_tts(text: str, voice_name: str, audio_path: str):
 # =========================
 # MAIN ENTRY POINT
 # =========================
-async def generate_tts(text: str, index: int) -> tuple[str, str]:
+async def generate_tts(text: str, index: int, voice_override: str = None) -> tuple[str, str]:
     if not text or not text.strip():
         raise ValueError(f"Empty text passed for index {index}.")
 
@@ -218,30 +247,36 @@ async def generate_tts(text: str, index: int) -> tuple[str, str]:
 
     try:
         if provider == "openai":
-            logger.info(f"[{index}] Generating OpenAI TTS ({TTS_VOICE_OPENAI})...")
-            await generate_openai_tts(text, audio_path)
+            voice = voice_override or (random.choice(VOICES_OPENAI) if RANDOMIZE_VOICE else TTS_VOICE_OPENAI)
+            logger.info(f"[{index}] Generating OpenAI TTS ({voice})...")
+            await generate_openai_tts(text, audio_path, voice)
             # Create a dummy JSON if word timings aren't supported by provider
             with open(json_path, "w") as f: json.dump([], f)
             
         elif provider == "eleven":
-            logger.info(f"[{index}] Generating ElevenLabs TTS ({TTS_VOICE_ELEVEN})...")
-            await generate_elevenlabs_tts(text, audio_path)
+            voice = voice_override or (random.choice(VOICES_ELEVEN) if RANDOMIZE_VOICE else TTS_VOICE_ELEVEN)
+            logger.info(f"[{index}] Generating ElevenLabs TTS ({voice})...")
+            await generate_elevenlabs_tts(text, audio_path, voice)
             with open(json_path, "w") as f: json.dump([], f)
             
         elif provider == "kokoro":
-            print(f"🎙️ [{index}] Generating Kokoro Local TTS ({TTS_VOICE_KOKORO})...")
-            await generate_kokoro_tts(text, TTS_VOICE_KOKORO, audio_path)
+            voice = voice_override or (random.choice(VOICES_KOKORO) if RANDOMIZE_VOICE else TTS_VOICE_KOKORO)
+            print(f"🎙️ [{index}] Generating Kokoro Local TTS ({voice})...")
+            await generate_kokoro_tts(text, voice, audio_path)
             with open(json_path, "w") as f: json.dump([], f)
             
         elif provider == "piper":
-            print(f"🎙️ [{index}] Generating Piper TTS ({TTS_VOICE_PIPER})...")
-            await generate_piper_tts(text, TTS_VOICE_PIPER, audio_path)
+            voice = voice_override or (random.choice(VOICES_PIPER) if RANDOMIZE_VOICE else TTS_VOICE_PIPER)
+            print(f"🎙️ [{index}] Generating Piper TTS ({voice})...")
+            await generate_piper_tts(text, voice, audio_path)
             with open(json_path, "w") as f: json.dump([], f)
 
         else: # Default/Edge
             voice, _ = pick_voice(text)
             logger.info(f"[{index}] Generating Edge TTS ({voice})...")
             await generate_edge_tts(text, voice, audio_path, json_path)
+
+
 
     except Exception as e:
         error_msg = str(e).lower()

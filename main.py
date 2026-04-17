@@ -3,6 +3,7 @@ import os
 import requests
 import random
 import sys
+import argparse
 
 # Force UTF-8 encoding for Windows terminals so emojis don't crash the script
 if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
@@ -12,13 +13,14 @@ from modules.fetch_news import fetch_articles
 from modules.extract import extract_text
 from modules.summarize import summarize, generate_video_metadata
 from modules.slides import create_layered_slide, create_intro_slide
-from modules.tts import generate_tts
+from modules.tts import generate_tts, get_random_voice
 from modules.video import create_video
+
 from modules.youtube import upload_video
 from modules.history import mark_seen
 import time
 import shutil
-from config import NUM_ARTICLES, DEDUPLICATE_NEWS
+import config
 
 
 def archive_workspace():
@@ -86,9 +88,9 @@ def download_image(url: str, output_path: str, retries=2, delay=3) -> str:
                 print(f"Warning: Could not download image {url} after {retries} attempts ({e})")
                 return None
 
-async def process_article(article, i, accent_color):
+async def process_article(article, i, accent_color, voice):
     """Processes a single article: extract, download image, summarize, create slide, and generate TTS."""
-    print(f"Processing ({i+1}/{NUM_ARTICLES}): {article['title']}")
+    print(f"Processing ({i+1}/{config.NUM_ARTICLES}): {article['title']}")
 
     text = extract_text(article["url"])
     if not text:
@@ -106,15 +108,13 @@ async def process_article(article, i, accent_color):
     try:
         summary = summarize(article["title"], text)
 
-        # Create layered slide (background + transparent panel)
-        bg_path, panel_path = create_layered_slide(article["title"], summary, i, image_path=local_img_path, accent_color=accent_color)
-
         # 🎙️ Generate TTS (say the headline, then the summary)
         tts_text = f"{article['title']}. {summary}"
-        audio_path, _ = await generate_tts(tts_text, i)
+        audio_path, _ = await generate_tts(tts_text, i, voice_override=voice)
     except Exception as e:
         print(f"  ❌ Failed processing article '{article['title']}': {e}")
         return None
+
 
     return {
         "index": i,
@@ -123,11 +123,13 @@ async def process_article(article, i, accent_color):
         "summary": summary,
         "local_img_path": local_img_path,
         "audio_path": audio_path,
-        "layered_paths": (bg_path, panel_path),
-        "image_path": local_img_path
+        "accent_color": accent_color # Store for later slide generation
     }
 
 async def main():
+    # 📦 Archive previous run if exists
+    archive_workspace()
+    
     start_time = time.time()
     articles = fetch_articles()
 
@@ -142,14 +144,20 @@ async def main():
     # Select a random theme color for this run
     THEME_COLORS = [(0, 255, 255), (57, 255, 20), (255, 0, 255), (191, 0, 255), (255, 170, 0)]
     
+    # Select a single voice for this entire run if randomization is on
+    session_voice = get_random_voice() if config.RANDOMIZE_VOICE else None
+    if session_voice:
+        print(f"🎙️ Selected Session Voice: {session_voice.upper()}")
+
     # ── 1. ARTICLE PROCESSING ──
     results = []
     # Use a fixed palette of neon accent colors
     accents = [(0, 180, 255), (255, 30, 200), (0, 255, 180), (255, 150, 0)]
+    random.shuffle(accents)
     
-    for i, article in enumerate(articles[:NUM_ARTICLES]):
+    for i, article in enumerate(articles[:config.NUM_ARTICLES]):
         color = accents[i % len(accents)]
-        res = await process_article(article, i, color)
+        res = await process_article(article, i, color, session_voice)
         if res:
             results.append(res)
 
@@ -157,17 +165,57 @@ async def main():
         print("Error: All articles failed during processing (could not extract text). Aborting video creation.")
         return
 
-    # ── 2. INTRO COLLAGE SLIDE ──
-    print("\n🎬 Generating Intro Collage Slide...")
-    intro_bg, intro_panel = create_intro_slide(results)
-    intro_text = f"Welcome to today's news update. I'm your AI anchor, and here are the {len(results)} top stories we are covering today."
-    intro_audio, _ = await generate_tts(intro_text, "intro")
+    # ── 2. DURATION CALCULATION & ORIENTATION ──
+    from moviepy.editor import AudioFileClip
     
-    # Prepend Intro to the sequences
-    final_layered_slides = [(intro_bg, intro_panel)] + [r["layered_paths"] for r in results]
-    final_audios = [intro_audio] + [r["audio_path"] for r in results]
+    # Generate Combined Intro
+    intro_text = f"Welcome to today's news update. Here are the {len(results)} top stories we are covering today."
+    intro_audio, _ = await generate_tts(intro_text, "intro", voice_override=session_voice)
+    
+    # Generate Outro
+    outro_text = "Please like, subscribe, and comment your views on this channel!"
+    outro_audio, _ = await generate_tts(outro_text, "outro", voice_override=session_voice)
 
-    # ── 3. VIDEO GENERATION ──
+    total_duration = AudioFileClip(intro_audio).duration + AudioFileClip(outro_audio).duration
+    for r in results:
+        total_duration += AudioFileClip(r["audio_path"]).duration
+
+    print(f"\n⏱️ Total estimated video duration: {total_duration:.2f} seconds")
+    
+    if total_duration > 180:
+        print("📐 Duration > 3.0 min: Switching to LANDSCAPE mode.")
+        config.VIDEO_SIZE = config.SIZE_LANDSCAPE
+    else:
+        print("📐 Duration <= 3.0 min: Staying in PORTRAIT mode.")
+        config.VIDEO_SIZE = config.SIZE_PORTRAIT
+
+    # ── 3. SLIDE GENERATION ──
+    print("\n🎬 Generating Slides...")
+    for r in results:
+        bg_p, frame_p, text_p = create_layered_slide(
+            r["title"], r["summary"], r["index"], 
+            image_path=r["local_img_path"], 
+            accent_color=r["accent_color"]
+        )
+        r["layered_paths"] = (bg_p, frame_p, text_p)
+
+    print("🎬 Generating Intro and Outro Slides...")
+    from modules.slides import create_titles_slide
+    intro_bg, intro_frame, intro_text = create_titles_slide(results)
+    
+    outro_bg, outro_frame, outro_text_img = create_layered_slide(
+        "Thank You For Watching!", 
+        outro_text, 
+        "outro", 
+        image_path=None, 
+        accent_color=(0, 255, 200)
+    )
+    
+    # Prepend Intro and append Outro sequence
+    final_layered_slides = [(intro_bg, intro_frame, intro_text)] + [r["layered_paths"] for r in results] + [(outro_bg, outro_frame, outro_text_img)]
+    final_audios = [intro_audio] + [r["audio_path"] for r in results] + [outro_audio]
+
+    # ── 4. VIDEO GENERATION ──
     print(f"\n🚀 Creating Final Video ({len(final_layered_slides)} slides total)...")
     create_video(final_layered_slides, final_audios)
 
@@ -215,16 +263,20 @@ async def main():
         thumbnail_path=thumbnail_image
     )
 
-    # ✅ Mark articles as seen in history
-    if DEDUPLICATE_NEWS:
+    if config.DEDUPLICATE_NEWS:
         for r in results:
             mark_seen(r["url"])
         print(f"📖 History depth: {len(results)} new articles added to permanent record.")
 
-    # 📦 Archive Workspace
-    archive_workspace()
-
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="AI News Anchor Video Generator")
+    parser.add_argument("-n", "--num", type=int, help="Number of articles to process")
+    args = parser.parse_args()
+
+    if args.num:
+        config.NUM_ARTICLES = args.num
+        print(f"📌 Overriding NUM_ARTICLES: {config.NUM_ARTICLES}")
+
     asyncio.run(main())

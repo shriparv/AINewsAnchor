@@ -2,9 +2,10 @@ from moviepy.editor import *
 import random
 import math
 
-from config import SLIDE_DURATION, VIDEO_SIZE
+from config import SLIDE_DURATION
+import config
 
-W, H = VIDEO_SIZE
+# W, H = config.VIDEO_SIZE # These are now accessed dynamically
 
 # =========================
 # TRANSITION EFFECTS
@@ -23,48 +24,52 @@ def fx_fade(clip, duration, td):
 def fx_slide_left(clip, duration, td):
     """Slide enters from the right, exits to the left."""
     def pos(t):
+        w, h = config.VIDEO_SIZE
         if t < td:
             progress = _ease_in_out(t / td)
-            return (int(W * (1 - progress)), 0)
+            return (int(w * (1 - progress)), 0)
         elif t > duration - td:
             progress = _ease_in_out((t - (duration - td)) / td)
-            return (int(-W * progress), 0)
+            return (int(-w * progress), 0)
         return (0, 0)
     return clip.set_position(pos).fadein(0.15).fadeout(0.15)
 
 def fx_slide_right(clip, duration, td):
     """Slide enters from the left, exits to the right."""
     def pos(t):
+        w, h = config.VIDEO_SIZE
         if t < td:
             progress = _ease_in_out(t / td)
-            return (int(-W * (1 - progress)), 0)
+            return (int(-w * (1 - progress)), 0)
         elif t > duration - td:
             progress = _ease_in_out((t - (duration - td)) / td)
-            return (int(W * progress), 0)
+            return (int(w * progress), 0)
         return (0, 0)
     return clip.set_position(pos).fadein(0.15).fadeout(0.15)
 
 def fx_slide_up(clip, duration, td):
     """Slide enters from the bottom, exits to the top."""
     def pos(t):
+        w, h = config.VIDEO_SIZE
         if t < td:
             progress = _ease_in_out(t / td)
-            return (0, int(H * (1 - progress)))
+            return (0, int(h * (1 - progress)))
         elif t > duration - td:
             progress = _ease_in_out((t - (duration - td)) / td)
-            return (0, int(-H * progress))
+            return (0, int(-h * progress))
         return (0, 0)
     return clip.set_position(pos).fadein(0.15).fadeout(0.15)
 
 def fx_slide_down(clip, duration, td):
     """Slide enters from the top, exits to the bottom."""
     def pos(t):
+        w, h = config.VIDEO_SIZE
         if t < td:
             progress = _ease_in_out(t / td)
-            return (0, int(-H * (1 - progress)))
+            return (0, int(-h * (1 - progress)))
         elif t > duration - td:
             progress = _ease_in_out((t - (duration - td)) / td)
-            return (0, int(H * progress))
+            return (0, int(h * progress))
         return (0, 0)
     return clip.set_position(pos).fadein(0.15).fadeout(0.15)
 
@@ -104,36 +109,97 @@ def _ease_out_elastic(t):
     s = p / 4
     return (2**(-10 * t) * math.sin((t - s) * (2 * math.pi) / p) + 1)
 
-def animate_layered_slide(bg_img, panel_img, audio_clip, is_intro=False):
+def load_transparent_image_clip(img_path, duration):
+    from PIL import Image
+    import numpy as np
+    from moviepy.editor import ImageClip
+    
+    pil_img = Image.open(img_path).convert("RGBA")
+    r, g, b, a = pil_img.split()
+    rgb_img = np.array(Image.merge("RGB", (r, g, b)))
+    mask_arr = np.array(a) / 255.0
+    
+    clip = ImageClip(rgb_img).set_duration(duration)
+    mask_clip = ImageClip(mask_arr, ismask=True).set_duration(duration)
+    return clip.set_mask(mask_clip)
+
+def load_rgb_image_clip(img_path, duration):
+    from PIL import Image
+    import numpy as np
+    from moviepy.editor import ImageClip
+    
+    pil_img = Image.open(img_path).convert("RGB")
+    rgb_img = np.array(pil_img)
+    return ImageClip(rgb_img).set_duration(duration)
+
+def animate_layered_slide(bg_img, frame_img, text_img=None, audio_clip=None, is_intro=False):
     """
-    Creates a layered animated slide where the background and panel move independently.
-    Uses 'parallax-lite' and elastic easing for a high-end feel.
+    Creates a layered animated slide where the background, frame, and text move independently.
+    Now includes a synchronized text reveal (wipe) effect.
     """
     # Dynamic duration: config value or auto-sync with audio + buffer
     duration = SLIDE_DURATION if SLIDE_DURATION is not None else (audio_clip.duration + 0.5)
     
     # ── Background Layer (Slow Ken Burns) ──
-    bg = ImageClip(bg_img).set_duration(duration)
+    bg = load_rgb_image_clip(bg_img, duration)
     drift = 25 if not is_intro else 40
     def bg_pos(t):
         return ("center", int(-drift * (t / duration)))
     bg = bg.set_position(bg_pos)
 
-    # ── Panel Layer (Elastic Entrance) ──
-    panel = ImageClip(panel_img, transparent=True).set_duration(duration)
+    # ── Frame Layer (Elastic Entrance) ──
+    frame = load_transparent_image_clip(frame_img, duration)
     intro_dur = 0.8 # Duration of the entrance animation
     
-    def panel_pos(t):
+    def frame_pos(t):
+        w, h = config.VIDEO_SIZE
         if t < intro_dur:
             progress = _ease_out_elastic(t / intro_dur)
             # Starts off-screen bottom, springs to center
-            return ("center", int(H * (1 - progress)))
+            return ("center", int(h * (1 - progress)))
         return ("center", 0)
 
-    panel = panel.set_position(panel_pos).fadein(0.2)
+    frame = frame.set_position(frame_pos).fadein(0.2)
+    
+    # ── Synchronized Text Layer (Vertical Wipe Reveal) ──
+    layers = [bg, frame]
+    
+    if text_img and os.path.exists(text_img):
+        text_clip = load_transparent_image_clip(text_img, duration)
+        text_clip = text_clip.set_position(frame_pos) # Stays with the frame
+        
+        # We start the reveal shortly after the slide begins entering
+        reveal_start = 0.2
+        # Finish the reveal by ~60% of the slide duration so it stays ahead of the speaker
+        reveal_dur = max(1.0, duration * 0.6) 
+        if reveal_dur > duration - 1.0: reveal_dur = max(1.0, duration - 1.0)
+        
+        def wipe_mask(t):
+            if t < reveal_start:
+                return 0.0 # Hidden
+            elif t > reveal_start + reveal_dur:
+                return 1.0 # Fully revealed
+            else:
+                return (t - reveal_start) / reveal_dur
+
+        # Wipe effect keeping the original text alpha mask intact!
+        def text_wipe_fl_mask(gf, t):
+            mask_frame = gf(t).copy()
+            progress = wipe_mask(t)
+            h = mask_frame.shape[0]
+            cutoff = int(h * progress)
+            if cutoff < h:
+                mask_frame[cutoff:, :] = 0.0
+            return mask_frame
+
+        import numpy as np
+        if text_clip.mask is not None:
+            text_clip.mask = text_clip.mask.fl(text_wipe_fl_mask)
+            
+        layers.append(text_clip)
 
     # ── Composite ──
-    composite = CompositeVideoClip([bg, panel], size=VIDEO_SIZE).set_duration(duration)
+    composite = CompositeVideoClip(layers, size=config.VIDEO_SIZE).set_duration(duration)
     composite = composite.set_audio(audio_clip)
 
     print(f"    🎭 Applied Animation: {'Elastic Intro Collage' if is_intro else 'Elastic Parallax Entrance'}")
@@ -149,13 +215,13 @@ def create_video(layered_slides, audios):
     """
     clips = []
     
-    for i, ((bg, panel), audio_path) in enumerate(zip(layered_slides, audios)):
+    for i, ((bg, frame, text), audio_path) in enumerate(zip(layered_slides, audios)):
         audio_clip = AudioFileClip(audio_path)
         
-        # Check if this is the intro slide (usually the first one)
+        # Check if this is the intro slide
         is_intro = (i == 0)
         
-        clip = animate_layered_slide(bg, panel, audio_clip, is_intro=is_intro)
+        clip = animate_layered_slide(bg, frame, text, audio_clip, is_intro=is_intro)
         clips.append(clip)
         
     if not clips:
@@ -198,9 +264,9 @@ def create_video(layered_slides, audios):
             fps=15,
             codec="h264_nvenc",
             audio_codec="aac",
-            threads=8,
+            threads=16, # Increase threading for modern many-core CPUs
             ffmpeg_params=[
-                "-preset", "p1",
+                "-preset", "p1", # Fastest NVENC preset
                 "-rc", "vbr",
                 "-cq", "26",
                 "-qmin", "26",

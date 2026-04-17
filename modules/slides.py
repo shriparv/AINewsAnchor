@@ -2,12 +2,12 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageOps
 import os
 import numpy as np
 import platform
-from config import VIDEO_SIZE
+import config
 
 # =========================
 # CONFIG
 # =========================
-SLIDE_W, SLIDE_H = VIDEO_SIZE
+# SLIDE_W, SLIDE_H are now accessed via config.VIDEO_SIZE
 PADDING = 50
 
 # =========================
@@ -64,7 +64,7 @@ def wrap_text(text, font, max_width, draw):
 # =========================
 def create_cinematic_background(image_path=None):
     """Creates a cinematic blurred background from the article image, or a gradient fallback."""
-    w, h = SLIDE_W, SLIDE_H
+    w, h = config.VIDEO_SIZE
 
     if image_path and os.path.exists(image_path):
         try:
@@ -117,16 +117,40 @@ def draw_neon_border(draw, bbox, color, radius=30, thickness=3, glow_passes=5):
 # TEXT WITH CLEAN SHADOW
 # =========================
 def draw_styled_text(draw, pos, text, font, fill):
-    """Draws crisp text with a clean dark shadow for readability."""
+    """Draws crisp text with multiple shadow layers for high readability and depth."""
     x, y = pos
 
-    # Dark outline/shadow for contrast against any background
-    shadow_color = (0, 0, 0, 200)
-    for dx, dy in [(-1,-1), (1,-1), (-1,1), (1,1), (2,2), (3,3)]:
-        draw.text((x + dx, y + dy), text, font=font, fill=shadow_color)
+    # Stronger multi-layer shadow for professional 'pop'
+    shadow_opacity = 220
+    shadow_color = (0, 0, 0, shadow_opacity)
+    
+    # Draw thicker shadow/glow
+    for offset in range(1, 4):
+        for dx, dy in [(-offset,-offset), (offset,-offset), (-offset,offset), (offset,offset), (0, offset), (0, -offset), (offset, 0), (-offset, 0)]:
+            draw.text((x + dx, y + dy), text, font=font, fill=shadow_color)
 
     # Main text (crisp, no blur)
     draw.text((x, y), text, font=font, fill=fill)
+
+
+def get_readable_color(color):
+    """Ensures a color is bright enough for a dark background."""
+    r, g, b = color[:3]
+    # Simple brightness estimate (Luminance)
+    brightness = (0.299 * r + 0.587 * g + 0.114 * b)
+    
+    # If the color is too dark (e.g. dark red/purple), boost it significantly
+    if brightness < 130:
+        # Boost saturation and value
+        factor = 255 / max(r, g, b, 1)
+        r = min(255, int(r * factor * 0.9 + 50))
+        g = min(255, int(g * factor * 0.9 + 50))
+        b = min(255, int(b * factor * 0.9 + 50))
+        return (r, g, b)
+    
+    # Even if somewhat bright, give it a 'neon' boost
+    return tuple(min(255, int(c * 1.3 + 30)) for c in (r, g, b))
+
 
 
 # =========================
@@ -143,6 +167,7 @@ def draw_divider(draw, y, x_start, x_end, color):
 # =========================
 def draw_slide_badge(draw, index, bbox, font_path):
     """Draws a small pill-shaped badge with the slide number."""
+    if isinstance(index, str): return # Do not draw badge for outro / string indices
     x2, y2 = bbox[2], bbox[3]
     badge_font = load_font(font_path, 28)
     text = str(index + 1)
@@ -168,41 +193,168 @@ def draw_slide_badge(draw, index, bbox, font_path):
 # =========================
 # MAIN: CREATE SLIDE
 # =========================
-def create_slide(title, text, index, image_path=None, accent_color=(0, 180, 255)):
+# =========================
+# MAIN: LAYERS & INTRO
+# =========================
+def create_intro_slide(articles):
     """
-    Creates a single self-contained slide image with:
-    - Cinematic blurred background
-    - Neon-bordered panel
-    - Inner thumbnail
-    - Headline + body with adaptive font sizing
-    - Divider, slide badge
+    Creates a high-impact intro slide with a grid of all article thumbnails.
+    Returns: (background_path, panel_path, None)
+    """
+    os.makedirs("output/slides", exist_ok=True)
     
-    Returns: slide_path (str)
+    # Background (Empty cinematic)
+    bg = create_cinematic_background()
+    bg_path = "output/slides/intro_bg.png"
+    bg.convert("RGB").save(bg_path)
+
+    sw, sh = config.VIDEO_SIZE
+
+    # Panel with Grid
+    panel = Image.new("RGBA", (sw, sh), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(panel)
+
+    # Header
+    title_font = load_font(BOLD_FONT_PATH, 80)
+    title_text = "TODAY'S TOP STORIES"
+    tw = draw.textbbox((0, 0), title_text, font=title_font)[2]
+    draw_styled_text(draw, ((sw - tw) // 2, 100), title_text, title_font, (0, 255, 200, 255))
+
+    # Grid logic
+    valid_images = [a["image_path"] for a in articles if a.get("image_path") and os.path.exists(a["image_path"])]
+    if valid_images:
+        num = len(valid_images)
+        cols = 2 if num <= 4 else 3
+        rows = (num + cols - 1) // cols
+        
+        # Grid area
+        gx1, gy1 = 60, 250
+        gx2, gy2 = sw - 60, sh - 100
+        gw, gh = gx2 - gx1, gy2 - gy1
+        
+        cell_w = (gw - (cols - 1) * 20) // cols
+        cell_h = (gh - (rows - 1) * 20) // rows
+        
+        for i, img_path in enumerate(valid_images):
+            r, c = i // cols, i % cols
+            try:
+                thumb_base = Image.open(img_path).convert("RGBA")
+                thumb = ImageOps.fit(thumb_base, (cell_w, cell_h), method=Image.Resampling.LANCZOS)
+                
+                # Rounded mask
+                mask = Image.new("L", (cell_w, cell_h), 0)
+                ImageDraw.Draw(mask).rounded_rectangle((0, 0, cell_w, cell_h), radius=15, fill=255)
+                thumb.putalpha(mask)
+                
+                px = gx1 + c * (cell_w + 20)
+                py = gy1 + r * (cell_h + 20)
+                panel.paste(thumb, (px, py), thumb)
+                
+                # Neon outline for each cell
+                ImageDraw.Draw(panel).rounded_rectangle((px, py, px+cell_w, py+cell_h), radius=15, outline=(0, 255, 200, 150), width=2)
+            except:
+                continue
+
+    panel_path = "output/slides/intro_panel.png"
+    panel.save(panel_path)
+    return bg_path, panel_path, None
+
+
+def create_titles_slide(results):
+    """
+    Creates a slide listing all headlines.
+    """
+    os.makedirs("output/slides", exist_ok=True)
+    
+    bg = create_cinematic_background()
+    bg_path = "output/slides/titles_bg.png"
+    bg.convert("RGB").save(bg_path)
+
+    sw, sh = config.VIDEO_SIZE
+    panel = Image.new("RGBA", (sw, sh), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(panel)
+
+    # Background panel
+    margin = 50
+    draw.rounded_rectangle([(margin, margin), (sw - margin, sh - margin)], radius=20, fill=(10, 15, 22, 200))
+    draw_neon_border(draw, (margin, margin, sw - margin, sh - margin), (0, 255, 200))
+
+    # Header
+    title_font = load_font(BOLD_FONT_PATH, 70)
+    header_text = "TODAY'S TOP STORIES"
+    tw = draw.textbbox((0, 0), header_text, font=title_font)[2]
+    draw_styled_text(draw, ((sw - tw) // 2, 80), header_text, title_font, (0, 255, 200, 255))
+
+    # List titles
+    y = 180
+    list_font_size = 48
+    if len(results) > 8:
+        list_font_size = 36
+    
+    list_font = load_font(FONT_PATH, list_font_size)
+    for i, r in enumerate(results):
+        bullet_text = f"{i+1}. {r['title']}"
+        lines = wrap_text(bullet_text, list_font, sw - 150, draw)
+        for line in lines:
+            draw_styled_text(draw, (100, y), line, list_font, (230, 230, 235, 255))
+            lh = draw.textbbox((0, 0), "Ay", font=list_font)[3] + 8
+            y += lh
+            y += 10
+        y += 15
+        if y > sh - 100: break
+
+    panel_path = "output/slides/titles_panel.png"
+    panel.save(panel_path)
+    return bg_path, panel_path, None
+
+
+def create_layered_slide(title, text, index, image_path=None, accent_color=(0, 180, 255)):
+    """
+    Returns: (background_path, frame_path, text_path)
     """
     os.makedirs("output/slides", exist_ok=True)
 
-    # ── Background ──
-    img = create_cinematic_background(image_path)
-    draw = ImageDraw.Draw(img, "RGBA")
+    # 1. BACKGROUND LAYER
+    bg = create_cinematic_background(image_path)
+    bg_path = f"output/slides/bg_{index}.png"
+    bg.convert("RGB").save(bg_path)
+
+    sw, sh = config.VIDEO_SIZE
+
+    # 2. FRAME LAYER (Box + Border + Image)
+    frame = Image.new("RGBA", (sw, sh), (0, 0, 0, 0))
+    draw_frame = ImageDraw.Draw(frame)
+
+    # 3. TEXT LAYER (Header + Summary)
+    text_layer = Image.new("RGBA", (sw, sh), (0, 0, 0, 0))
+    draw_text = ImageDraw.Draw(text_layer)
 
     # ── Panel dimensions ──
     margin = 15  # Small equal margin for "edge to edge" look
     panel_x1 = margin
     panel_y1 = margin
-    panel_x2 = SLIDE_W - margin
-    panel_y2 = SLIDE_H - margin
+    panel_x2 = sw - margin
+    panel_y2 = sh - margin
     panel_w = panel_x2 - panel_x1
     panel_h = panel_y2 - panel_y1
 
-    # Glass panel fill
-    draw.rounded_rectangle(
+    # Glass panel fill (Slightly lighter, more "glassy" tint)
+    draw_frame.rounded_rectangle(
         [(panel_x1, panel_y1), (panel_x2, panel_y2)],
-        radius=20, # Slightly smaller radius for tighter margin
-        fill=(10, 15, 22, 200)
+        radius=20,
+        fill=(15, 20, 28, 180) # Slightly more transparent, lighter base
+    )
+    
+    # White inner "shine" for glass effect
+    draw_frame.rounded_rectangle(
+        [(panel_x1 + 2, panel_y1 + 2), (panel_x2 - 2, panel_y2 - 2)],
+        radius=18,
+        outline=(255, 255, 255, 30), # Very subtle white highlight
+        width=1
     )
 
     # Neon border
-    draw_neon_border(draw, (panel_x1, panel_y1, panel_x2, panel_y2), accent_color)
+    draw_neon_border(draw_frame, (panel_x1, panel_y1, panel_x2, panel_y2), accent_color)
 
     # ── Inner content area ──
     content_pad = 25 # Reduced padding
@@ -211,28 +363,51 @@ def create_slide(title, text, index, image_path=None, accent_color=(0, 180, 255)
     cx2 = panel_x2 - content_pad
     content_w = cx2 - cx1
 
-    cursor_y = cy1  # Tracks vertical position as we lay out elements
+    cursor_y = cy1
+    is_landscape = sw > sh
 
     # ── Inner Thumbnail ──
     thumb_h = 0
+    thumb_w = 0
     if image_path and os.path.exists(image_path):
         try:
-            tw = content_w
-            th = int(tw * (9 / 16))
+            if is_landscape:
+                # Landscape: Thumbnail on the left
+                thumb_w = int(content_w * 0.45)
+                thumb_h_max = panel_h - (content_pad * 2)
+                tw = thumb_w
+                th = int(tw * (9 / 16))
+                if th > thumb_h_max:
+                    th = thumb_h_max
+                    tw = int(th * (16 / 9))
+            else:
+                # Portrait: Full width vertical stack
+                tw = content_w
+                th = int(tw * (9 / 16))
+
             thumb_base = Image.open(image_path).convert("RGBA")
             thumb = ImageOps.fit(thumb_base, (tw, th), method=Image.Resampling.LANCZOS)
 
-            # Rounded corners mask
-            mask = Image.new("L", (tw, th), 0)
-            mask_draw = ImageDraw.Draw(mask)
+            image_mask = Image.new("L", (tw, th), 0)
+            mask_draw = ImageDraw.Draw(image_mask)
             mask_draw.rounded_rectangle((0, 0, tw, th), radius=20, fill=255)
-            thumb.putalpha(mask)
+            thumb.putalpha(image_mask)
 
-            img.paste(thumb, (cx1, cursor_y), thumb)
-            thumb_h = th + 25
-            cursor_y += thumb_h
+            frame.paste(thumb, (cx1, cursor_y), thumb)
+            
+            if is_landscape:
+                # Text will start to the right of the image
+                text_x_start = cx1 + tw + 30
+                content_w = cx2 - text_x_start
+            else:
+                thumb_h = th + 25
+                cursor_y += thumb_h
+                text_x_start = cx1 + 10
         except Exception as e:
             print(f"Warning: thumbnail render failed: {e}")
+            text_x_start = cx1 + 10
+    else:
+        text_x_start = cx1 + 10
 
     # ── Available space for text ──
     badge_reserve = 60  # Space for the badge at the bottom
@@ -289,27 +464,40 @@ def create_slide(title, text, index, image_path=None, accent_color=(0, 180, 255)
             body_lines[-1] = body_lines[-1].rstrip() + "..."
 
     # ── Render Headline ──
-    text_x = cx1 + 10
+    # Use the enhanced color logic to ensure visibility
+    header_color = get_readable_color(accent_color)
+    
     for line in title_lines:
-        draw_styled_text(draw, (text_x, cursor_y), line, title_font, (*accent_color, 255))
+        draw_styled_text(draw_text, (text_x_start, cursor_y), line, title_font, (*header_color, 255))
         cursor_y += lh_title
+
 
     # ── Divider ──
     cursor_y += 10
-    draw_divider(draw, cursor_y, cx1 + 10, cx2 - 10, accent_color)
+    draw_divider(draw_text, cursor_y, text_x_start, cx2 - 10, accent_color)
     cursor_y += divider_gap - 10 + 10
 
     # ── Render Body ──
+    # Pure bright white for body text
     for line in body_lines:
-        draw_styled_text(draw, (text_x, cursor_y), line, body_font, (230, 230, 235, 255))
+        draw_styled_text(draw_text, (text_x_start, cursor_y), line, body_font, (255, 255, 255, 255))
         cursor_y += lh_body
 
     # ── Slide Number Badge ──
-    draw_slide_badge(draw, index, (panel_x1, panel_y1, panel_x2, panel_y2), FONT_PATH)
+    draw_slide_badge(draw_frame, index, (panel_x1, panel_y1, panel_x2, panel_y2), FONT_PATH)
 
-    # ── Save ──
-    slide_path = f"output/slides/slide_{index}.png"
-    img.convert("RGB").save(slide_path, "PNG", optimize=True)
-    print(f"  🖼️  Slide {index + 1} saved: {slide_path}")
-
-    return slide_path
+    # ── Save Layers ──
+    # 🔥 CRITICAL: Force RGB/RGBA conversion and remove any metadata that causes BGR swaps or channel issues in MoviePy
+    frame_path = f"output/slides/frame_{index}.png"
+    text_path = f"output/slides/text_{index}.png"
+    
+    # We strip info dict and save as clean RGBA to prevent color channel distortion
+    frame = frame.convert("RGBA")
+    text_layer = text_layer.convert("RGBA")
+    
+    frame.save(frame_path, "PNG")
+    text_layer.save(text_path, "PNG")
+    
+    slide_id = index if isinstance(index, str) else index + 1
+    print(f"  🖼️  Layered Slide {slide_id} generated (split-layer mode).")
+    return bg_path, frame_path, text_path

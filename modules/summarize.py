@@ -32,7 +32,7 @@ def clean_output(text: str) -> str:
     return text
 
 
-from config import LLM_MODEL
+import config
 
 def summarize(title: str, text: str) -> str:
     """
@@ -73,9 +73,9 @@ News Summary:"""
 
     try:
         res = requests.post(
-            "http://localhost:11434/api/generate",
+            config.LLM_URL,
             json={
-                "model": LLM_MODEL,
+                "model": config.LLM_MODEL,
                 "prompt": prompt,
                 "stream": False,
                 "options": {
@@ -93,7 +93,7 @@ News Summary:"""
     except requests.exceptions.ConnectionError:
         raise RuntimeError("Could not connect to Ollama. Is it running on localhost:11434?")
     except requests.exceptions.HTTPError as e:
-        raise RuntimeError(f"Ollama returned an HTTP error: {e}")
+        raise RuntimeError(f"Ollama returned an HTTP error: {e}\nResponse: {e.response.text}")
 
     raw_output = res.json().get("response", "").strip()
 
@@ -124,9 +124,9 @@ def generate_video_metadata(news_summary_text: str):
 
     try:
         res = requests.post(
-            "http://localhost:11434/api/generate",
+            config.LLM_URL,
             json={
-                "model": "llama3",
+                "model": config.LLM_MODEL,
                 "prompt": prompt,
                 "stream": False,
                 "options": {"temperature": 0.5, "num_predict": 400}

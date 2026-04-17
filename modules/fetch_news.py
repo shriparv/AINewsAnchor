@@ -1,5 +1,6 @@
 import requests
 import time
+import config
 from config import NEWS_API_KEY, NUM_ARTICLES, DEDUPLICATE_NEWS
 from modules.history import is_seen
 
@@ -10,12 +11,13 @@ def fetch_articles(retries=3, delay=5):
     fetch_count = 50 if DEDUPLICATE_NEWS else NUM_ARTICLES
 
     params = {
-        "category": "technology",
+        "category": config.CURRENT_CATEGORY,
         "language": "en",
         "pageSize": fetch_count,
-        "apiKey": NEWS_API_KEY,
-        "domains": "techcrunch.com, theverge.com, wired.com, arstechnica.com, engadget.com, zdnet.com, venturebeat.com,venturebeat.com, analyticsindiamag.com, towardsdatascience.com, ai.googleblog.com, openai.com/blog, deepmind.com/blog, synchedreview.com,gsmarena.com, androidauthority.com, 9to5google.com, macrumors.com, windowscentral.com,"
+        "apiKey": NEWS_API_KEY
     }
+
+    print(f"📡 Fetching top headlines for category: {config.CURRENT_CATEGORY.upper()}...")
 
     for attempt in range(retries):
         try:
@@ -33,11 +35,22 @@ def fetch_articles(retries=3, delay=5):
 
             data = res.json()
             raw_articles = data.get("articles", [])
-
+            import random
+            random.shuffle(raw_articles) # 🔥 Shuffling for more variety
+            
             if DEDUPLICATE_NEWS:
                 filtered = [a for a in raw_articles if not is_seen(a["url"])]
-                print(f"🔍 Deduplication: {len(raw_articles) - len(filtered)} already seen. {len(filtered)} new articles found.")
-                return filtered[:NUM_ARTICLES]
+                print(f"🔍 Deduplication: {len(raw_articles) - len(filtered)} already seen. {len(filtered)} random new articles found.")
+                
+                # If we have enough new ones, return them
+                if len(filtered) >= NUM_ARTICLES:
+                    return filtered[:NUM_ARTICLES]
+                else:
+                    print(f"⚠️ Only {len(filtered)} new articles found. Filling remaining spots with recently seen content for variety.")
+                    # Fill the rest with seen articles (shuffled) to meet the count if possible
+                    seen = [a for a in raw_articles if is_seen(a["url"])]
+                    combined = filtered + seen
+                    return combined[:NUM_ARTICLES]
             
             return raw_articles[:NUM_ARTICLES]
 
