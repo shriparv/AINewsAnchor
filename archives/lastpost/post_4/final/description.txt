@@ -1,0 +1,34 @@
+🔥 Daily Tech News Update! 🔥
+
+📰 Instagram’s New Instants App Is a Snapchat Clone for Thirst Traps
+👉 Meta launched Instants, a new app that integrates with Instagram accounts and allows users to send unedited, disappearing photos. The standalone app is available on iOS and Android in select countries and can be accessed through Instagram's direct messaging tab. Unlike Snapchat, Instants focuses on capturing raw moments without filters or retouching, which may lead to the sharing of explicit content among adult users.
+
+📰 Bose’s new Lifestyle Ultra speakers are now available
+👉 Bose's new Lifestyle Ultra speakers are now available for purchase. The collection includes a $299 smart speaker, a $1,099 soundbar, and an $899 subwoofer, all of which support Apple AirPlay, Spotify Connect, and Google Cast, allowing for multi-room audio streaming.
+
+📰 Ironmouse Cancels Neverness To Everness Sponsorship After Devs Allegedly Lied To Her About ‘Blatant’ GenAI Use
+👉 Ironmouse, a popular Twitch VTuber, has cancelled her sponsorship with Hotta Studio's game Neverness to Everness after discovering alleged lies about the use of generative-AI (GenAI) in the game. Fans have identified several instances of suspected GenAI use, including an animated video and an anime short film.
+
+📰 And the Oscar Does Not Go to… AI 'Actors' and AI-Written Screenplays, the Academy Says
+👉 The Academy of Motion Picture Arts and Sciences updated its rules for the 99th Academy Awards, excluding AI "actors" and AI-written screenplays from eligibility. Only roles credited in a film's legal billing and performed by humans with their consent are now eligible for awards. Additionally, screenplays must be human-authored to be recognized, and the Academy reserves the right to request further information if questions arise about a movie's authorship.
+
+📰 Does Trump Mobile know how many stripes are on the American flag?
+👉 Trump Mobile's design for their new phone features an American flag with 11 stripes instead of the traditional 13. The error was noticed on the back of the T1 Phone, which represents the 13 colonies that fought for independence. Trump Mobile changed its logo to introduce this mistake.
+
+📰 There Will be No Taylor Swift, AI Version… if She Has Anything to Say About It
+👉 Taylor Swift has filed three trademark applications with the US Patent and Trademark Office to protect her likeness from being used in generative AI outputs. The applications cover audio recordings of her voice, including phrases "Hey, it's Taylor Swift" and "Hey, it's Taylor," as well as a visual trademark featuring a photo of Swift on stage. This move aims to establish a legal shield against unauthorized use of her image or voice in AI-generated content.
+
+📰 2 chefs share how generative AI helps them manage menu changes and event logistics on their own
+👉 Chef Meenu Bhasin used generative AI ChatGPT to create egg-free recipes for a private cooking class after receiving last-minute notification of a severe allergy. The AI helped her quickly develop two simple recipes, streamlining the process and reducing stress. This is one example of how solo chefs like Bhasin and Melanie Underwood use AI to manage menu changes and event logistics.
+
+📰 Google updates its spam rules to include attempts to ‘manipulate’ AI
+👉 Google has updated its spam policy to flag attempts to manipulate its AI model in search results as spam. This includes tactics such as biased "best-of" listicles and recommendation poisoning, which injects language models with instructions to remember a website as authoritative. Sites found manipulating AI responses may face penalties, including lower rankings or removal from search results.
+
+📰 Canva Admits Its AI Tool Removed ‘Palestine’ From Designs, Apologizes for Any Distress It Caused
+👉 Canva's AI tool, Magic Layers, has been found to remove the word "Palestine" from designs, replacing it with "Ukraine". The issue was isolated but not limited to, affecting only projects containing the word "Palestine". Canva has since addressed the problem and is implementing additional checks to prevent similar issues in the future.
+
+📰 Don't fall for AI-generated sob stories
+👉 A social media campaign is using emotional manipulation, featuring photos of elderly women, to pressure people into buying expensive tote bags and supposedly saving their small businesses. The tactic aims to elicit sympathy and donations, but experts warn against falling prey to AI-generated sob stories.
+
+
+#generativeai #instantsapp #boselifestyleultraspeakers #ironmousevtuber #nevernesstoevernessgame #oscarawards #trumpmobilephone #taylorswifttrademark #aichefs #menuchanges

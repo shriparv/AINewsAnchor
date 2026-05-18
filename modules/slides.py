@@ -133,6 +133,56 @@ def draw_styled_text(draw, pos, text, font, fill):
     draw.text((x, y), text, font=font, fill=fill)
 
 
+def draw_text_with_emojis(image, draw, position, text, fill, font):
+    """Helper to draw text that uses high-quality PNG assets for specific emojis."""
+    import re
+    from pathlib import Path
+    x, y = position
+    
+    # Emoji mapping to assets (relative to project root)
+    emoji_map = {
+        "👍": "assets/emojis/like.png",
+        "🔔": "assets/emojis/bell.png",
+        "💬": "assets/emojis/comment.png",
+        "↪️": "assets/emojis/share.png",
+        "🚀": "assets/emojis/rocket.png"
+    }
+    
+    # Regex to find emojis
+    emoji_pattern = re.compile(u'[\U00010000-\U0010ffff]', re.UNICODE)
+    
+    last_idx = 0
+    for match in emoji_pattern.finditer(text):
+        # Draw preceding normal text
+        normal_text = text[last_idx:match.start()]
+        if normal_text:
+            draw_styled_text(draw, (x, y), normal_text, font, fill)
+            x += draw.textbbox((0, 0), normal_text, font=font)[2]
+        
+        emoji = match.group()
+        asset_path = emoji_map.get(emoji)
+        
+        if asset_path and Path(asset_path).exists():
+            # Load and paste the high-quality 3D emoji
+            with Image.open(asset_path).convert("RGBA") as emoji_img:
+                size = int(font.size * 1.3) 
+                emoji_img.thumbnail((size, size), Image.Resampling.LANCZOS)
+                ey = y + (font.size - emoji_img.height) // 2
+                image.paste(emoji_img, (int(x), int(ey)), emoji_img)
+                x += emoji_img.width + 10
+        else:
+            # Fallback to standard text if asset missing
+            draw_styled_text(draw, (x, y), emoji, font, fill)
+            x += draw.textbbox((0, 0), emoji, font=font)[2]
+            
+        last_idx = match.end()
+        
+    # Draw remaining text
+    remaining = text[last_idx:]
+    if remaining:
+        draw_styled_text(draw, (x, y), remaining, font, fill)
+
+
 def get_readable_color(color):
     """Ensures a color is bright enough for a dark background."""
     r, g, b = color[:3]
@@ -279,14 +329,21 @@ def create_titles_slide(results):
     draw.rounded_rectangle([(margin, margin), (sw - margin, sh - margin)], radius=20, fill=(10, 15, 22, 200))
     draw_neon_border(draw, (margin, margin, sw - margin, sh - margin), (0, 255, 200))
 
-    # Header
-    title_font = load_font(BOLD_FONT_PATH, 70)
-    header_text = "TODAY'S TOP STORIES"
-    tw = draw.textbbox((0, 0), header_text, font=title_font)[2]
-    draw_styled_text(draw, ((sw - tw) // 2, 80), header_text, title_font, (0, 255, 200, 255))
+    # Unified Intro/List Header
+    welcome_font = load_font(BOLD_FONT_PATH, 85)
+    header_font = load_font(FONT_PATH, 45)
+    
+    welcome_text = "WELCOME"
+    header_text = f"TODAY'S {len(results)} TOP STORIES"
+    
+    ww = draw.textbbox((0, 0), welcome_text, font=welcome_font)[2]
+    hw = draw.textbbox((0, 0), header_text, font=header_font)[2]
+    
+    draw_styled_text(draw, ((sw - ww) // 2, 70), welcome_text, welcome_font, (0, 255, 200, 255))
+    draw_styled_text(draw, ((sw - hw) // 2, 160), header_text, header_font, (230, 230, 235, 255))
 
     # List titles
-    y = 180
+    y = 240
     list_font_size = 48
     if len(results) > 8:
         list_font_size = 36
@@ -494,23 +551,37 @@ def create_layered_slide(title, text, index, image_path=None, accent_color=(0, 1
         cursor_y += (available_h - actual_text_h) // 2
 
     # ── Render Headline ──
-    # Use the enhanced color logic to ensure visibility
     header_color = get_readable_color(accent_color)
+    is_centered = (index == "outro")
     
     for line in title_lines:
-        draw_styled_text(draw_text, (text_x_start, cursor_y), line, title_font, (*header_color, 255))
+        current_x = text_x_start
+        if is_centered:
+            line_w = measure_draw.textbbox((0, 0), line, font=title_font)[2]
+            current_x = cx1 + (content_w - line_w) // 2
+        
+        draw_styled_text(draw_text, (current_x, cursor_y), line, title_font, (*header_color, 255))
         cursor_y += lh_title
-
 
     # ── Divider ──
     cursor_y += 10
-    draw_divider(draw_text, cursor_y, text_x_start, cx2 - 10, accent_color)
+    div_x1, div_x2 = text_x_start, cx2 - 10
+    if is_centered:
+        div_w = int(content_w * 0.6) # Sightly shorter centered divider
+        div_x1 = cx1 + (content_w - div_w) // 2
+        div_x2 = div_x1 + div_w
+        
+    draw_divider(draw_text, cursor_y, div_x1, div_x2, accent_color)
     cursor_y += divider_gap - 10 + 10
 
     # ── Render Body ──
-    # Pure bright white for body text
     for line in body_lines:
-        draw_styled_text(draw_text, (text_x_start, cursor_y), line, body_font, (255, 255, 255, 255))
+        current_x = text_x_start
+        if is_centered:
+            line_w = measure_draw.textbbox((0, 0), line, font=body_font)[2]
+            current_x = cx1 + (content_w - line_w) // 2
+            
+        draw_styled_text(draw_text, (current_x, cursor_y), line, body_font, (255, 255, 255, 255))
         cursor_y += lh_body
 
     # ── Slide Number Badge ──
@@ -531,3 +602,49 @@ def create_layered_slide(title, text, index, image_path=None, accent_color=(0, 1
     slide_id = index if isinstance(index, str) else index + 1
     print(f"  🖼️  Layered Slide {slide_id} generated (split-layer mode).")
     return bg_path, frame_path, text_path
+
+def create_cta_slide(title, points, index_name):
+    """Creates a high-impact CTA slide with 3D emojis."""
+    os.makedirs("output/slides", exist_ok=True)
+    sw, sh = config.VIDEO_SIZE
+    
+    bg = create_cinematic_background()
+    bg_path = f"output/slides/bg_{index_name}.png"
+    bg.convert("RGB").save(bg_path)
+
+    frame = Image.new("RGBA", (sw, sh), (0, 0, 0, 0))
+    draw_frame = ImageDraw.Draw(frame)
+    
+    text_layer = Image.new("RGBA", (sw, sh), (0, 0, 0, 0))
+    draw_text = ImageDraw.Draw(text_layer)
+
+    margin = 50
+    draw_frame.rounded_rectangle([(margin, margin), (sw - margin, sh - margin)], radius=20, fill=(10, 15, 22, 210))
+    draw_neon_border(draw_frame, (margin, margin, sw - margin, sh - margin), (0, 255, 200))
+
+    title_font = load_font(BOLD_FONT_PATH, 80)
+    body_font = load_font(FONT_PATH, 50)
+    
+    # Draw Title (Lowered to stay in safe zone)
+    tw = draw_text.textbbox((0, 0), title, font=title_font)[2]
+    draw_text_with_emojis(text_layer, draw_text, ((sw - tw) // 2, 180), title, (0, 255, 200, 255), title_font)
+    
+    # Draw Points (Spread out more)
+    y = 380
+    for point in points:
+        pw = draw_text.textbbox((0, 0), point, font=body_font)[2]
+        draw_text_with_emojis(text_layer, draw_text, ((sw - pw) // 2, y), point, (255, 255, 255, 255), body_font)
+        y += 120
+
+    frame_path = f"output/slides/frame_{index_name}.png"
+    text_path = f"output/slides/text_{index_name}.png"
+    frame.save(frame_path)
+    text_layer.save(text_path)
+    
+    return bg_path, frame_path, text_path
+
+def create_welcome_cta_slide(title="Welcome to the Channel!", points=["👍 Like this Video", "🔔 Subscribe & Hit the Bell", "🚀 Stay Updated"], index_name="welcome"):
+    return create_cta_slide(title, points, index_name)
+
+def create_thanks_cta_slide(title="Thanks for watching!", points=["💬 Share your Comments", "👍 Like & Subscribe", "↪️ Share with Friends"], index_name="outro"):
+    return create_cta_slide(title, points, index_name)

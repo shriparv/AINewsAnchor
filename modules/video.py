@@ -270,7 +270,9 @@ def create_video(layered_slides, audios):
         has_gpu = False
 
     if has_gpu:
-        print("🚀 Utilizing GPU (NVENC) for hardware-accelerated video encoding!")
+        print("\n" + "="*50)
+        print("🚀 VIDEO ENCODING: UTILIZING NVIDIA GPU (NVENC)")
+        print("="*50 + "\n")
         final.write_videofile(
             "output/final/technews.mp4",
             fps=15,
@@ -288,7 +290,10 @@ def create_video(layered_slides, audios):
             ]
         )
     else:
-        print("🐢 NVIDIA GPU not found. Falling back to CPU (libx264).")
+        print("\n" + "!"*50)
+        print("🐢 VIDEO ENCODING: FALLING BACK TO CPU (libx264)")
+        print("   (NVIDIA GPU or NVENC drivers not detected)")
+        print("!"*50 + "\n")
         final.write_videofile(
             "output/final/technews.mp4",
             fps=15,

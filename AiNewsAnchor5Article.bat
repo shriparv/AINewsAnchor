@@ -2,6 +2,8 @@
 
 echo Checking if Ollama is already running...
 
+cd D:\Coding\Python\AINewsAnchor\
+
 netstat -ano | findstr :11434 > nul
 if %errorlevel%==0 (
     echo Ollama is already running.
@@ -17,7 +19,7 @@ echo Loading model gemma4:31b (warmup)...
 ollama run gemma4:31b "hello" > nul
 
 echo Running main.py script...
-"D:\Coding\Python\AINewsAnchor\.venv\Scripts\python.exe" "D:\Coding\Python\AINewsAnchor\main.py"
+"D:\Coding\Python\AINewsAnchor\.venv\Scripts\python.exe" "D:\Coding\Python\AINewsAnchor\main.py" -n 5
 
 echo Stopping Ollama (optional)...
 

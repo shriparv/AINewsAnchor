@@ -1,0 +1,20 @@
+# Exclude virtual environment
+.venv/
+
+# Exclude git files
+.git
+.gitignore
+
+# Exclude caches and compiled files
+__pycache__/
+*.pyc
+*.pyo
+
+# Exclude OS files
+Thumbs.db
+Desktop.ini
+
+# Exclude large data files not needed at build time
+output/
+archives/
+scratch/

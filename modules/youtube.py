@@ -1,4 +1,6 @@
 import os
+import random
+import config
 import pickle
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
@@ -164,22 +166,28 @@ def upload_video(file_path: str, title: str, description: str, tags: list, categ
     if not youtube:
         return None
 
-    # Calculate dynamic schedule (Last Scheduled Video + 4 Hours)
+    from modules.schedule import get_next_schedule_time
+    
+    # Calculate dynamic schedule using the Golden Strategy
     last_publish = get_last_scheduled_publish_at(youtube)
     now = datetime.datetime.now().astimezone()
     
+    base_time = max(last_publish, now) if last_publish else now
+    schedule_time = get_next_schedule_time(base_time)
+    
     if last_publish:
-        # Ensure last_publish is in the future relative to now, otherwise start from now
-        base_time = max(last_publish, now)
-        schedule_time = base_time + datetime.timedelta(hours=4)
-        print(f"📅 Queue Found! Last video at {last_publish.strftime('%H:%M %p, %b %d')}. Stacking next one at {schedule_time.strftime('%H:%M %p, %b %d')}.")
+        print(f"📅 Queue Found! Last video at {last_publish.strftime('%H:%M %p, %b %d')}. Next one at {schedule_time.strftime('%H:%M %p, %b %d')}.")
     else:
-        schedule_time = now + datetime.timedelta(hours=4)
-        print(f"📅 Queue Empty! Scheduling first video for {schedule_time.strftime('%H:%M %p, %b %d')} (4 hours from now).")
+        print(f"📅 Queue Empty! First video for {schedule_time.strftime('%H:%M %p, %b %d')}.")
 
     publish_at = schedule_time.isoformat()
 
     print(f"🚀 Initiating YouTube Upload: {title}...")
+
+    # --- Safety Truncation ---
+    if len(description) > 5000:
+        print(f"⚠️ Warning: Description length ({len(description)}) exceeds YouTube limit. Truncating to 5000 chars.")
+        description = description[:4997] + "..."
 
     request = youtube.videos().insert(
         part="snippet,status",
@@ -208,6 +216,7 @@ def upload_video(file_path: str, title: str, description: str, tags: list, categ
         except googleapiclient.errors.HttpError as e:
             print(f"❌ YouTube API HTTP Error: {e.resp.status}")
             print(f"❌ Details: {e.content.decode('utf-8')}")
+            print(f"❌ Metadata Context: Title Len={len(title)}, Desc Len={len(description)}, Tag Count={len(tags)}")
             return None
         except Exception as e:
             print(f"❌ YouTube API Error: {e}")
@@ -227,4 +236,4 @@ def upload_video(file_path: str, title: str, description: str, tags: list, categ
     if thumbnail_path:
         set_thumbnail(youtube, video_id, thumbnail_path)
 
-    return video_id
+    return video_id, schedule_time

@@ -14,8 +14,8 @@ def clean_output(text: str) -> str:
     # Remove markdown bold/italic markers (** or *)
     text = re.sub(r"\*{1,2}(.*?)\*{1,2}", r"\1", text)
 
-    # Remove special/non-printable characters (keep basic punctuation + bullets)
-    text = re.sub(r"[^\w\s.,!\?;:\-•\(\)]", "", text)
+    # Remove special/non-printable characters (keep basic punctuation + symbols)
+    text = re.sub(r"[^\w\s.,!\?;:\-•\(\)&#$@'\"/]", "", text)
 
     # Normalize bullet variants to dash
     text = re.sub(r"^[\•\-\*]\s*", "- ", text, flags=re.MULTILINE)
@@ -84,7 +84,7 @@ News Summary:"""
                     "num_predict": 400,   # Increased space for storytelling
                 }
             },
-            timeout=60
+            timeout=300 # Increased timeout for huge models like 31b
         )
         res.raise_for_status()
 
@@ -97,7 +97,24 @@ News Summary:"""
 
     raw_output = res.json().get("response", "").strip()
 
+    # Retry once if the response is empty
     if not raw_output:
+        print(f"⚠️ Warning: Model '{config.LLM_MODEL}' returned an empty response. Retrying once...")
+        res = requests.post(
+            config.LLM_URL,
+            json={
+                "model": config.LLM_MODEL,
+                "prompt": prompt,
+                "stream": False,
+                "options": {"temperature": 0.7, "num_predict": 400}
+            },
+            timeout=300
+        )
+        res.raise_for_status()
+        raw_output = res.json().get("response", "").strip()
+
+    if not raw_output:
+        print(f"❌ Error: Model '{config.LLM_MODEL}' returned an empty response after retry.")
         raise ValueError("Model returned an empty response.")
 
     return clean_output(raw_output)
@@ -131,7 +148,7 @@ def generate_video_metadata(news_summary_text: str):
                 "stream": False,
                 "options": {"temperature": 0.5, "num_predict": 400}
             },
-            timeout=60
+            timeout=300
         )
         res.raise_for_status()
         raw = res.json().get("response", "").strip()

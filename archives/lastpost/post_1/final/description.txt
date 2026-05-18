@@ -1,0 +1,19 @@
+🔥 Daily Tech News Update! 🔥
+
+📰 Microsoft's massive Kenya AI data center would require switching off 'half the country' to meet power requirements, government says — $1 billion project stalls over capacity disagreements and lack of infrastructure
+👉 Microsoft's $1 billion AI data center project in Kenya has stalled due to disagreements over guaranteed annual capacity payments and lack of infrastructure. The project would have required switching off half the country to meet power requirements, according to Kenyan President William Ruto. The initial phase aimed to generate 100 megawatts of capacity, with a long-term goal of scaling up to 1 gigawatt, consuming roughly a third of Kenya's total installed electricity capacity.
+
+📰 This Trump FCC Cybersecurity ‘Fix’ Is About To Make Hardware Way More Expensive For Everyone
+👉 The Trump FCC has introduced a new rule banning Chinese-based testing laboratories from certifying electronic devices sold in the US, including smartphones, cameras, and computers. This move is expected to increase hardware costs for consumers.
+
+📰 Open Weights Kill the Moat
+👉 American investment in AI was predicated on the assumption that frontier models would become a monopoly, justifying trillion-dollar valuations. However, this expectation has been upended by the emergence of open-weight models, primarily from Chinese labs, which are commoditizing AI capabilities and making them widely available at low costs.
+
+📰 Stock market today: Dow, S&P 500, and Nasdaq climb amid Apple CEO change, Warsh hearing, Iran uncertainty
+👉 US stocks declined on Tuesday amid stalled peace talks with Iran and a confirmation hearing for Federal Reserve chair nominee Kevin Warsh. The Dow Jones Industrial Average fell 0.6, followed by similar declines in the S&P 500 and Nasdaq Composite. The market was also influenced by Apple's CEO transition, as Tim Cook steps down and John Ternus takes over.
+
+📰 Telus Digital using AI to mask accents of offshore workers
+👉 Telus Digital, a division of Telus, is reportedly using AI-powered speech-to-speech models from Tomato.ai to mask the accents of offshore workers on phone calls. The technology transforms live audio by encoding and modifying pronunciation-related features. The company's use of this technology is currently unclear, with union representatives suggesting it may not be customer-facing yet.
+
+
+#Microsoft #Kenya #AIdatacenter #powerrequirements #infrastructure #capacitypayments #WilliamRuto #TrumpFCC #cybersecurity #Chinesetestinglaboratories
