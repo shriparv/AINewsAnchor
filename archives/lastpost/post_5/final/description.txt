@@ -1,19 +1,19 @@
 🔥 Daily Tech News Update! 🔥
 
-📰 Bitcoin is rallying as flagship conference approaches, data shows the gains rarely last
-👉 Bitcoin is trading around $75,000 ahead of this year's flagship conference in Las Vegas, with data suggesting it tends to rise before the event, deliver mixed performance during, and decline substantially afterward. The pattern has played out in previous years, including 2019, 2021, and 2023, where any momentum failed to hold after the conference.
+📰 DuckDuckGo's 'No AI' Search Traffic Climbs as Users Reject Google's AI Overhaul
+👉 DuckDuckGo has seen a significant increase in traffic to its "No AI" search option following Google's AI-focused updates at its May 19th I/O event. Visits to the No AI page more than tripled after the announcement and have remained consistently high. In response, DuckDuckGo is promoting browser extensions that default to No AI search and plans to expand this feature to more platforms. The No AI option removes AI-assisted answers, chat interfaces, and most AI-generated content from search results.
 
-📰 SatoshiGuesser – Roll for Bitcoin
-👉 SatoshiGuesser is a web game that simulates the process of guessing Satoshi Nakamoto's Bitcoin private keys by rolling random 256-bit numbers and verifying them against a curated set of over 22,000 Patoshi-pattern coinbase addresses. The odds are extremely remote, but if a match is found, the rolled number becomes the working private key for that wallet.
+📰 Microsoft’s AI chief says superintelligence is near, but won’t take your job
+👉 Microsoft AI CEO Mustafa Suleyman discusses the rapid advancement toward superintelligence and addresses concerns about AI's impact on employment. He critiques claims of AI consciousness, emphasizes Microsoft's strategic direction in AI development, and acknowledges current public skepticism toward AI technology.
 
-📰 Dude… where’s my password? Claude reunites forgetful stoner with $400k Bitcoin stash
-👉 A man who forgot his Bitcoin password 11 years ago has regained access to a crypto wallet containing $400,000 worth of currency with the help of AI tool Claude. The individual had two-thirds of the necessary passwords but couldn't recall the crucial third, which he had changed while under the influence.
+📰 AI is reducing hours of work to minutes. Some employees say they're just as busy.
+👉 AI tools are enabling tech workers to complete tasks in minutes that previously took hours, according to interviews with software engineers, product managers, and data scientists at major companies. Workers report using AI to draft documents, summarize meetings, review code, and automate reports. However, some employees find that time saved is often reinvested into additional work rather than reducing overall workload. Several Amazon workers noted that AI implementation has added complexity and hours to their workweeks.
 
-📰 Man Says He Used AI to Unlock Old Bitcoin Wallet Worth $400K
-👉 A pseudonymous individual regained access to a lost Bitcoin wallet worth approximately $400,000 after forgetting its password over a decade ago. The breakthrough was achieved with the assistance of Anthropic's Claude chatbot, which analyzed files from an old college laptop and attempted to guess trillions of passwords. The user had stored the Bitcoins in a Blockchain.com wallet and backed it up with a mnemonic phrase before changing the password to a forgotten combination.
+📰 Microsoft starts canceling Claude Code licenses
+👉 Microsoft is canceling most of its Claude Code licenses by the end of June, citing the need to focus on its own GitHub Copilot CLI tool. The move affects the Experiences Devices team, which includes engineers working on Windows, Microsoft 365, Outlook, Teams, and Surface. Employees are being encouraged to transition to Copilot CLI in the coming weeks. The decision follows concerns that Claude Code's popularity has undermined Microsoft's own coding tool.
 
-📰 Why bitcoin traders are suddenly obsessed with a forgotten crypto
-👉 Bitcoin traders are increasingly focused on a forgotten cryptocurrency, Ethereum Classic (ETC), as its price surged 30 in recent days. The surge is attributed to speculation surrounding a upcoming "hard fork" upgrade that aims to improve the blockchain's security and scalability.
+📰 Join us: Lovable's CEO pitches straight to laid-off Big Tech workers
+👉 Lovable CEO Anton Osika directly recruited laid-off Big Tech workers in a LinkedIn post, positioning his startup as an alternative to traditional tech giants. The company plans to hire around 400 employees globally this year, targeting talent displaced by industry-wide layoffs at companies like Meta, Google, and Microsoft. Osika described the current environment as a "structural shift" happening in tech, where startups can now compete for top talent previously loyal to established companies. This recruitment strategy comes as major tech firms continue cutting jobs while investing heavily in artificial intelligence.
 
 
-#bitcoin #cryptocurrency #flagshipconference #lasvegas #SatoshiGuesser #Patoshi-pattern #privatekeys #password #ClaudeAItool #Blockchain.comwallet
+#duckduckgonoai #googleaiupdate #microsoftai #superintelligence #aijobimpact #aiproductivitytools #claudecodecancellation #githubcopilot #aiworkforcechanges #bigtechlayoffs

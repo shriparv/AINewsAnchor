@@ -69,16 +69,18 @@ def upload_video_to_facebook(file_path, title, description, schedule_time=None):
     schedule_dt_str = datetime.datetime.fromtimestamp(schedule_time_ts).strftime('%H:%M %p, %b %d')
     print(f"🚀 Initiating Facebook Upload (Scheduled for {schedule_dt_str}): {title}...")
 
-    # Facebook Graph API Video Upload Endpoint
-    url = f"https://graph-video.facebook.com/v19.0/{config.FB_PAGE_ID}/videos"
-
+    # Truncate description to a reasonable length to avoid Facebook API errors
+    max_desc_length = 5000
+    safe_description = description[:max_desc_length] if description else ""
     payload = {
         'title': title,
-        'description': description,
+        'description': safe_description,
         'access_token': config.FB_PAGE_ACCESS_TOKEN,
         'published': 'false',
         'scheduled_publish_time': schedule_time_ts
     }
+
+    url = f"https://graph-video.facebook.com/v19.0/{config.FB_PAGE_ID}/videos"
 
     try:
         with open(file_path, 'rb') as video_file:
