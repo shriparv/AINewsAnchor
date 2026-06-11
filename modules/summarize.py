@@ -34,13 +34,14 @@ def clean_output(text: str) -> str:
 
 import config
 
-def summarize(title: str, text: str) -> str:
+def summarize(title: str, text: str, short_mode: bool = False) -> str:
     """
-    Summarizes input text into ~5 concise sentences using the local LLM.
+    Summarizes input text into a few concise sentences using the local LLM.
 
     Args:
         title: The news topic or headline.
         text: The input text to summarize.
+        short_mode: If True, restricts summaries to 1-2 sentences.
     Returns:
         A cleaned, concise summary string.
     Raises:
@@ -51,12 +52,14 @@ def summarize(title: str, text: str) -> str:
     if not text or not text.strip():
         raise ValueError("Input text is empty or blank.")
 
+    sentence_rule = "exactly 1–2 short sentences" if short_mode else "exactly 2–4 short sentences"
+
     prompt = f"""You are an expert news editor. Your task is to write a clean, high-quality summary of the provided news article.
 
 STRICT STYLE RULES:
 - Write a concise, factual, and professional news summary.
 - Focus ONLY on the core facts and key takeaways.
-- Keep it concise: exactly 2–4 short sentences.
+- Keep it concise: {sentence_rule}.
 - NEVER use conversational filler, introductions, greetings, or meta-commentary (e.g., NEVER say "Here is the summary", "Good evening", or "I'm your host").
 - No bullet points, no lists.
 - Begin immediately with the news fact.

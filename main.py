@@ -155,7 +155,8 @@ async def process_article(article, i, total, accent_color, voice):
     local_img_path = download_image(img_url, f"output/images/news_{i}.jpg")
     
     try:
-        summary = summarize(article["title"], text)
+        short_mode = (total >= 4)
+        summary = summarize(article["title"], text, short_mode=short_mode)
 
         # 🎙️ Generate TTS (say the headline, then the summary)
         tts_text = f"{article['title']}. {summary}"
@@ -239,10 +240,16 @@ async def main():
     # ── 2. INTRO + OUTRO TTS (Parallel with duration calc) ──
     from moviepy.editor import AudioFileClip
 
-    intro_tts_text = f"Welcome to today's news update. Here are the {len(results)} top stories we are covering today."
-    welcome_cta_text = "Welcome to the channel! Before we begin today's update, please take a moment to like this video, subscribe to our channel, and press the bell icon to receive notifications for all our future tech updates! 🚀 🔔"
-    thanks_cta_text = "Thanks for watching! Please do like, subscribe, and share your comments and feedbacks below. We love hearing from you! 👍 💬"
-    outro_tts_text = "That's all for today's news. Stay informed and I will see you in the next update!"
+    if len(results) >= 4:
+        intro_tts_text = f"Today's top {len(results)} tech stories."
+        welcome_cta_text = "Subscribe and hit the bell for daily tech updates!"
+        thanks_cta_text = "Thanks for watching! Like and comment below."
+        outro_tts_text = "See you in the next update!"
+    else:
+        intro_tts_text = f"Welcome to today's news update. Here are the {len(results)} top stories we are covering today."
+        welcome_cta_text = "Welcome to the channel! Before we begin today's update, please take a moment to like this video, subscribe to our channel, and press the bell icon to receive notifications for all our future tech updates! 🚀 🔔"
+        thanks_cta_text = "Thanks for watching! Please do like, subscribe, and share your comments and feedbacks below. We love hearing from you! 👍 💬"
+        outro_tts_text = "That's all for today's news. Stay informed and I will see you in the next update!"
     
     print("\n🎙️ Generating CTA TTS in parallel...")
     (intro_audio, _), (welcome_audio, _), (thanks_audio, _), (outro_audio, _) = await asyncio.gather(
