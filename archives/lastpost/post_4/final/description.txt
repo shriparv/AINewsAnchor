@@ -1,19 +1,19 @@
 🔥 Daily Tech News Update! 🔥
 
-📰 The submariner-turned-top Army tech boss said the hardest thing about modernizing isn't the new tools — it's the people
-👉 The U.S. Army's former chief information officer, Leonel Garciga, emphasized that modernizing the military is hindered not by technology but by resistance to change within its workforce and institutional culture. He advocated for rapid deployment of new tools, prioritizing user experience and accepting risks to foster innovation and adaptation. Garciga's approach focused on breaking traditional bureaucratic barriers to enable faster experimentation and implementation across the force. His tenure ended last Friday, marking the close of a three-year effort to accelerate digital transformation in the Army.
+📰 Control AirPods & Galaxy Buds on Ubuntu with ‘BudsLink’
+👉 BudsLink is a new Linux app that enables desktop control of Bluetooth earbuds from Apple, Samsung, Sony, and Nothing, offering features like battery level monitoring, noise cancellation, and ambient sound modes directly on Ubuntu without requiring mobile apps. The GTK4/libadwaita application communicates with devices over L2CAP and RFCOMM sockets through BlueZ, providing broader hardware support than similar tools like LibrePods.
 
-📰 'We Still Can't See Dark Matter. But What If We Can Hear It?'
-👉 Scientists may have accidentally detected dark matter in 2019 and are now exploring the possibility of detecting it through sound rather than visual means. New research published in Physical Review Letters investigates this alternative approach to finding the elusive substance that makes up most of the universe's mass.
+📰 Ubuntu and Ubuntu Pro on Azure Cobalt 200 VMs
+👉 Microsoft announces preview of Azure Cobalt 200 VMs with second-generation Arm silicon, featuring day-one support for Ubuntu and Ubuntu Pro with seamless deployment, long-term security maintenance, and Kernel Livepatch capabilities.
 
-📰 Russian spies are aggressively seeking Western technology as sanctions bite, officials say
-👉 Russian intelligence agencies are intensifying efforts to steal Western technology and defense secrets as sanctions strain the country's wartime economy. Moscow is using fake companies, middlemen, and cyber spies to acquire advanced machinery, research, and dual-use technology that could enhance its military capabilities. European officials report increased targeting of defense industries and high-end research, including technology for civilian use that could be integrated into Russian weapons systems. The campaign reflects Russia's push to maintain technological parity with the West despite economic pressures.
+📰 KDE Plasma 6.7 released
+👉 KDE Plasma 6.7 introduces independent per-screen virtual desktops, a feature requested for over two decades, alongside a revived classic theme, HDR and ICC profile support, and performance improvements including Intel GPU enhancements. The release is dedicated to longtime KDE supporter Eric Laffoon and will be available to KDE Neon, Arch, and Kubuntu users in the coming days.
 
-📰 NASA’s Next-Gen Processor Is 500 Times More Powerful Than Current Space Chips
-👉 NASA is testing a next-generation processor that delivers 500 times more computing power than current space chips, enabling real-time spacecraft responses and faster data processing. The radiation-hardened chip supports NASA's goals for autonomous missions and scientific discovery as the agency prepares for lunar and Martian exploration. Developed through a partnership, the new multicore system is fault-tolerant and designed to withstand extreme space conditions. Initial tests began in February with promising results, marking a significant upgrade from older, reliable but slower processors.
+📰 1.38 Millimeter Microcontroller
+👉 Texas Instruments' MSPM0C110x microcontrollers are ultra-low-power 32-bit MCUs based on the Arm Cortex-M0 core, featuring up to 24MHz performance, 16KB flash memory, 1KB SRAM, and integrated analog peripherals including a 12-bit ADC and temperature sensor. Designed for extended battery life, these cost-optimized MCUs support communication protocols like UART, SPI, and I2C, and operate across a wide temperature range from -40C to 125C.
 
-📰 Republicans Claim Anti-Data Center Movement Is a Chinese Psy-Op
-👉 Republican lawmakers are urging the FBI to investigate whether anti-AI sentiment in the U.S. is part of a Chinese influence campaign. Representatives Brett Guthrie, John Joyce, and Bob Latta cited reports from the Bitcoin Policy Institute and Power the Future, which allege China is working to slow U.S. AI development. The lawmakers specifically pointed to Senator Bernie Sanders' call for a moratorium on AI data centers and his hosting of a panel featuring Chinese academics as evidence of this influence. The letter requests a briefing by June 18, 2026.
+📰 Ubuntu To Ship Newer AMD ROCm Updates Via SRUs
+👉 Canonical will ship newer AMD ROCm updates via stable release updates (SRUs) for Ubuntu 26.04 LTS, starting with ROCm 7.2, to provide timely support for AMD GPUs and new features without requiring a full Ubuntu release upgrade.
 
 
-#spacetechnology #NASAprocessor #darkmatterdetection #militarymodernization #Russianespionage #AIdatacenters #LeonelGarciga #spaceexploration #cybersecurity #defensetechnology
+#Ubuntu #BudsLink #AirPodsonLinux #GalaxyBudsLinux #KDEPlasma6.7 #UbuntuPro #AzureCobalt200 #ARMVMs #Linuxnews #BluetoothearbudsLinux

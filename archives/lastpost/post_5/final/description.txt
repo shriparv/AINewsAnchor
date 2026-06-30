@@ -1,19 +1,16 @@
 🔥 Daily Tech News Update! 🔥
 
-📰 DuckDuckGo's 'No AI' Search Traffic Climbs as Users Reject Google's AI Overhaul
-👉 DuckDuckGo has seen a significant increase in traffic to its "No AI" search option following Google's AI-focused updates at its May 19th I/O event. Visits to the No AI page more than tripled after the announcement and have remained consistently high. In response, DuckDuckGo is promoting browser extensions that default to No AI search and plans to expand this feature to more platforms. The No AI option removes AI-assisted answers, chat interfaces, and most AI-generated content from search results.
+📰 The Intersection of Encryption and AI
+👉 Bruce Schneier's 2010 column for Dark Reading argued that cryptography alone cannot address modern network security challenges like denial-of-service attacks and data theft, reflecting on how his influential work was used by NSA cryptographers in the 1990s during cryptography's transition from academic niche to mainstream engineering discipline.
 
-📰 Microsoft’s AI chief says superintelligence is near, but won’t take your job
-👉 Microsoft AI CEO Mustafa Suleyman discusses the rapid advancement toward superintelligence and addresses concerns about AI's impact on employment. He critiques claims of AI consciousness, emphasizes Microsoft's strategic direction in AI development, and acknowledges current public skepticism toward AI technology.
+📰 Lithuanian startup launches open-source network to detect Shahed-type drones
+👉 A Lithuanian startup has launched an open-source acoustic drone detection network using volunteers' Android phones to identify Shahed-type drones by analyzing their low-frequency engine sounds. The system triangulates drone locations when multiple devices detect the same signal, with participation from technology and security experts across Lithuania.
 
-📰 AI is reducing hours of work to minutes. Some employees say they're just as busy.
-👉 AI tools are enabling tech workers to complete tasks in minutes that previously took hours, according to interviews with software engineers, product managers, and data scientists at major companies. Workers report using AI to draft documents, summarize meetings, review code, and automate reports. However, some employees find that time saved is often reinvested into additional work rather than reducing overall workload. Several Amazon workers noted that AI implementation has added complexity and hours to their workweeks.
+📰 Polestar Faces a Ban on Selling Its EVs in the US
+👉 Polestar will be banned from selling its 2027 and later electric vehicle models in the U.S. due to concerns over Chinese-connected technology, with the company confirming it has no plans to resume U.S. sales, including for the upcoming Polestar 7. The Swedish automaker, owned by China's Geely through Volvo, will continue selling existing inventory and supporting current customers in the U.S. while shifting manufacturing to Europe.
 
-📰 Microsoft starts canceling Claude Code licenses
-👉 Microsoft is canceling most of its Claude Code licenses by the end of June, citing the need to focus on its own GitHub Copilot CLI tool. The move affects the Experiences Devices team, which includes engineers working on Windows, Microsoft 365, Outlook, Teams, and Surface. Employees are being encouraged to transition to Copilot CLI in the coming weeks. The decision follows concerns that Claude Code's popularity has undermined Microsoft's own coding tool.
-
-📰 Join us: Lovable's CEO pitches straight to laid-off Big Tech workers
-👉 Lovable CEO Anton Osika directly recruited laid-off Big Tech workers in a LinkedIn post, positioning his startup as an alternative to traditional tech giants. The company plans to hire around 400 employees globally this year, targeting talent displaced by industry-wide layoffs at companies like Meta, Google, and Microsoft. Osika described the current environment as a "structural shift" happening in tech, where startups can now compete for top talent previously loyal to established companies. This recruitment strategy comes as major tech firms continue cutting jobs while investing heavily in artificial intelligence.
+📰 This Week in Security: Arch AUR, Steam Marketplace, WordPress All Face Issues, Taco-Themed Coding, and Mythos Makes National News
+👉 Starting June 11, 2026, over 1,500 packages in the Arch User Repository (AUR) were compromised by malware that exploited the repository's package adoption process, installing malicious NPM packages designed to steal credentials, tokens, and cryptocurrency wallets from browsers and Electron-based applications. The malware employs advanced cloaking techniques including process renaming and systemd services to maintain persistence while targeting popular applications like Slack, Discord, and Signal.
 
 
-#duckduckgonoai #googleaiupdate #microsoftai #superintelligence #aijobimpact #aiproductivitytools #claudecodecancellation #githubcopilot #aiworkforcechanges #bigtechlayoffs
+#networksecurity #encryption #AIsecurity #BruceSchneier #cybersecuritytrends #dronedetection #open-sourcesecurity #Shaheddrones #PolestarEVban #Chinesetechnologyconcerns

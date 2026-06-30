@@ -1,19 +1,19 @@
 🔥 Daily Tech News Update! 🔥
 
-📰 New Nginx Exploit
-👉 A critical heap buffer overflow vulnerability, CVE-2026-42945, has been discovered in NGINX's ngx_http_rewrite_module, allowing unauthenticated remote code execution. The flaw stems from a mismatch in buffer size calculation during URI rewriting, leading to exploitable memory corruption. Three additional memory corruption issues were also identified. The vulnerability was autonomously detected by depthfirst's security analysis system.
+📰 Red Hat hit by npm supply‑chain attack - here's how to stay safe
+👉 Red Hat experienced a supply-chain attack on its npm packages, with 32 compromised packages in the @redhat-cloud-services namespace potentially stealing developer credentials. The company has removed the affected packages, which were downloaded over 116,000 times weekly.
 
-📰 Ubuntu 26.10 daily builds now available to download
-👉 Daily builds of Ubuntu 26.10 'Stonking Stingray' are now available for download as development begins on the next major release. These builds, updated regularly through package management, are intended for testing and bug reporting rather than daily use. Users should expect occasional breaks and instability, as major user-facing changes typically arrive later in the development cycle. The final stable release is scheduled for October 15, 2026.
+📰 NYC World Cup jerseys are selling for big bucks on eBay
+👉 NYC World Cup jerseys are selling for high prices on eBay as soccer fans seek to purchase the limited edition shirts.
 
-📰 Firefox 151 release refreshes New Tab page, supports PDF merging
-👉 Firefox 151 introduces a refreshed New Tab page, now named Firefox Home, featuring a redesigned rounded search bar and updated weather widget. The update includes improved customization options for shortcuts and backgrounds, while retaining core functionality like story dismissal and topic blocking. Mozilla also highlights the visual enhancements as part of its upcoming Nova redesign.
+📰 Shai-Hulud malware worms Red Hat npm package versions downloaded 80K times a week
+👉 Security researchers discovered that dozens of Red Hat npm package releases were infected with the Mini Shai-Hulud worm, a supply chain attack traced to a compromised Red Hat employee GitHub account, affecting packages downloaded 80,000 times weekly. The malware uses preinstall hooks to steal GitHub Actions secrets and npm tokens, with 95 compromised versions identified so far.
 
-📰 Blog ran on Ubuntu 16.04 for 10 years. I migrated it to FreeBSD
-👉 The blog author migrated their site from an outdated Ubuntu 16.04 server, which had been running for over 10 years, to a new FreeBSD-based system hosted on Hetzner. The move was motivated by security concerns over the unsupported Ubuntu version and the desire for a more modern, cost-effective infrastructure. The new setup utilizes FreeBSD Jails with Bastille and delivers improved performance at less than half the previous cost.
+📰 Will Friedle Reacts to Ben Savage’s Absence From Reunion Documentary
+👉 Will Friedle expressed hope that Ben Savage might still join the Doc Meets World documentary despite his absence, stating the cast respects his decision to take a different path. Friedle and Danielle Fishel emphasized their continued support for Savage, while the documentary follows the remaining cast on their podcast tour.
 
-📰 I knew Linux PCs would get a free pass from California's controversial age-verification law for operating systems
-👉 California lawmakers are introducing an amendment to exempt open-source operating systems from the state's Digital Age Assurance Act, which requires age verification during setup. The exemption applies to Linux distributions like Ubuntu, Fedora, and Debian, among others, sparing them from mandatory age checks scheduled to begin January 1, 2027. The amendment defines exempt systems as those distributed under licenses allowing unrestricted copying, redistribution, and modification. This change addresses enforcement challenges previously cited by critics who noted the difficulty of implementing age verification on decentralized, open-source platforms.
+📰 David scores hat-trick as Canada thrash NINE-man Qatar
+👉 Jonathan David scored a hat-trick as Canada defeated nine-man Qatar 6-0, with the match overshadowed by a severe leg injury to Canadian midfielder Ismael Kone, who required oxygen and hospitalization following a challenge that resulted in a red card for Qatar's Assim Madibo.
 
 
-#Ubuntu #NGINXexploit #CVE-2026-42945 #heapbufferoverflow #remotecodeexecution #Ubuntu26.10 #dailybuilds #StonkingStingray #Firefox151 #NewTabpage
+#redhat #npmsupplychainattack #shai-huludmalware #cybersecurity #softwaresecurity #developersecurity #npmpackages #supplychainsecurity #malwareinfection #githubcompromise
