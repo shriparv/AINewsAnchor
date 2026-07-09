@@ -240,16 +240,18 @@ async def main():
     # ── 2. INTRO + OUTRO TTS (Parallel with duration calc) ──
     from moviepy.editor import AudioFileClip
 
+    is_hindi = getattr(config, "NEWS_LANGUAGE", "en") == "hi"
+
     if len(results) >= 4:
-        intro_tts_text = f"Today's top {len(results)} tech stories."
-        welcome_cta_text = "Subscribe and hit the bell for daily tech updates!"
-        thanks_cta_text = "Thanks for watching! Like and comment below."
-        outro_tts_text = "See you in the next update!"
+        intro_tts_text = f"आज की शीर्ष {len(results)} तकनीकी खबरें।" if is_hindi else f"Today's top {len(results)} tech stories."
+        welcome_cta_text = "रोजाना टेक अपडेट के लिए सब्सक्राइब करें और बेल आइकन दबाएं!" if is_hindi else "Subscribe and hit the bell for daily tech updates!"
+        thanks_cta_text = "देखने के लिए धन्यवाद! लाइक और कमेंट करें।" if is_hindi else "Thanks for watching! Like and comment below."
+        outro_tts_text = "अगले अपडेट में मिलते हैं!" if is_hindi else "See you in the next update!"
     else:
-        intro_tts_text = f"Welcome to today's news update. Here are the {len(results)} top stories we are covering today."
-        welcome_cta_text = "Welcome to the channel! Before we begin today's update, please take a moment to like this video, subscribe to our channel, and press the bell icon to receive notifications for all our future tech updates! 🚀 🔔"
-        thanks_cta_text = "Thanks for watching! Please do like, subscribe, and share your comments and feedbacks below. We love hearing from you! 👍 💬"
-        outro_tts_text = "That's all for today's news. Stay informed and I will see you in the next update!"
+        intro_tts_text = f"आज के न्यूज़ अपडेट में आपका स्वागत है। यहाँ आज की {len(results)} मुख्य खबरें हैं।" if is_hindi else f"Welcome to today's news update. Here are the {len(results)} top stories we are covering today."
+        welcome_cta_text = "चैनल पर आपका स्वागत है! कृपया इस वीडियो को लाइक करें, सब्सक्राइब करें और भविष्य के सभी टेक अपडेट के लिए बेल आइकन दबाएं! 🚀 🔔" if is_hindi else "Welcome to the channel! Before we begin today's update, please take a moment to like this video, subscribe to our channel, and press the bell icon to receive notifications for all our future tech updates! 🚀 🔔"
+        thanks_cta_text = "देखने के लिए धन्यवाद! कृपया लाइक करें, सब्सक्राइब करें और अपनी प्रतिक्रिया साझा करें। 👍 💬" if is_hindi else "Thanks for watching! Please do like, subscribe, and share your comments and feedbacks below. We love hearing from you! 👍 💬"
+        outro_tts_text = "आज के लिए बस इतना ही। अगले अपडेट में मिलते हैं!" if is_hindi else "That's all for today's news. Stay informed and I will see you in the next update!"
     
     print("\n🎙️ Generating CTA TTS in parallel...")
     (intro_audio, _), (welcome_audio, _), (thanks_audio, _), (outro_audio, _) = await asyncio.gather(
@@ -294,11 +296,11 @@ async def main():
 
     (intro_bg, intro_frame, intro_text_layer), (welcome_bg, welcome_frame, welcome_text), (thanks_bg, thanks_frame, thanks_text), (outro_bg, outro_frame, outro_text_img) = await asyncio.gather(
         asyncio.to_thread(create_titles_slide, results),
-        asyncio.to_thread(create_welcome_cta_slide, "Welcome to the Channel!", ["🚀 Follow for more", "🔔 Hit the bell"], "welcome"),
-        asyncio.to_thread(create_thanks_cta_slide, "Thanks for watching!", ["💬 Comment below", "👍 Like if helpful"], "thanks_cta"),
+        asyncio.to_thread(create_welcome_cta_slide, "चैनल पर आपका स्वागत है!" if is_hindi else "Welcome to the Channel!", ["🚀 और अपडेट्स के लिए फॉलो करें" if is_hindi else "🚀 Follow for more", "🔔 बेल आइकन दबाएं" if is_hindi else "🔔 Hit the bell"], "welcome"),
+        asyncio.to_thread(create_thanks_cta_slide, "देखने के लिए धन्यवाद!" if is_hindi else "Thanks for watching!", ["💬 नीचे कमेंट करें" if is_hindi else "💬 Comment below", "👍 लाइक करें" if is_hindi else "👍 Like if helpful"], "thanks_cta"),
         asyncio.to_thread(
             create_layered_slide,
-            "Stay Informed!", outro_text, "outro", None, (0, 255, 200)
+            "जुड़े रहें!" if is_hindi else "Stay Informed!", outro_text, "outro", None, (0, 255, 200)
         ),
     )
     

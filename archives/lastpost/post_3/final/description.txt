@@ -1,19 +1,34 @@
 🔥 Daily Tech News Update! 🔥
 
-📰 Red Hat hit by npm supply‑chain attack - here's how to stay safe
-👉 Red Hat experienced a supply-chain attack on its npm packages, with 32 compromised packages in the @redhat-cloud-services namespace potentially stealing developer credentials. The company has removed the affected packages, which were downloaded over 116,000 times weekly.
+📰 Can China target critics abroad with its new 'ethnic unity' law?
+👉 China's new Ethnic Unity Law, which criminalizes actions deemed to split the country or undermine national unity, may enable the government to target critics living abroad, as illustrated by the detention of Zhang Yadi, a UK-based student arrested in China after expressing support for Tibetan rights online. The law formalizes Beijing's stance against separatism and could provide legal justification for actions against overseas dissidents.
 
-📰 NYC World Cup jerseys are selling for big bucks on eBay
-👉 NYC World Cup jerseys are selling for high prices on eBay as soccer fans seek to purchase the limited edition shirts.
+📰 Carer who 'couldn't go on' not guilty of mother's murder
+👉 A carer who attempted suicide after strangling her mother on Christmas Eve has been found not guilty of murder.
 
-📰 Shai-Hulud malware worms Red Hat npm package versions downloaded 80K times a week
-👉 Security researchers discovered that dozens of Red Hat npm package releases were infected with the Mini Shai-Hulud worm, a supply chain attack traced to a compromised Red Hat employee GitHub account, affecting packages downloaded 80,000 times weekly. The malware uses preinstall hooks to steal GitHub Actions secrets and npm tokens, with 95 compromised versions identified so far.
+📰 120mph serves but movement a struggle - how did Williams' return go?
+👉 Serena Williams returned to competitive tennis at Wimbledon after a four-year absence, losing to Australia's Maya Joint 6-3, 6-7(6-8), 6-3 in a match that showcased glimpses of her former dominance but also highlighted her struggle with movement and consistency. Despite the loss, Williams showed flashes of her trademark power and competitive spirit, though she was ultimately outplayed by the younger Joint, who handled the pace well and regrouped effectively after a second-set tiebreak.
 
-📰 Will Friedle Reacts to Ben Savage’s Absence From Reunion Documentary
-👉 Will Friedle expressed hope that Ben Savage might still join the Doc Meets World documentary despite his absence, stating the cast respects his decision to take a different path. Friedle and Danielle Fishel emphasized their continued support for Savage, while the documentary follows the remaining cast on their podcast tour.
+📰 Knicks fans go wild as New York team makes biggest comeback in NBA Finals history
+👉 New York Knicks fans erupted in celebration after the team staged the biggest comeback in NBA Finals history, with Mayor Zohran Mamdani expressing his amazement on social media and Taylor Swift dancing with Knicks City Dancers while wearing a "Stevie Knicks" t-shirt.
 
-📰 David scores hat-trick as Canada thrash NINE-man Qatar
-👉 Jonathan David scored a hat-trick as Canada defeated nine-man Qatar 6-0, with the match overshadowed by a severe leg injury to Canadian midfielder Ismael Kone, who required oxygen and hospitalization following a challenge that resulted in a red card for Qatar's Assim Madibo.
+📰 Bungie’s Last ‘Destiny 2’ Update Is a Bittersweet Blast
+👉 Bungie has released its final Destiny 2 update, "Monuments of Triumph," marking the end of nearly a decade of support for the shared-world shooter as the studio shifts focus to Marathon and other projects. The update features emotional farewells from key characters and teases unfinished storylines, including a cosmic showdown with the Winnower, while maintaining the franchise's optimistic tone with a "goodbye for now" sentiment.
+
+📰 What Army horse soldiers go through in Arlington funeral training
+👉 US Army Caisson Detachment soldiers undergo rigorous 18-week training programs to master horsemanship skills required for conducting solemn funeral processions at Arlington National Cemetery, following a two-year suspension that ended in 2025 after horse welfare issues were addressed through enhanced training protocols developed with equestrian expert Chester Weber.
+
+📰 Rest your best or go strong? Norway face questions as Haaland left out
+👉 Norway rested Erling Haaland and made 10 changes for their final group game against France, who won 4-1 with a 25-minute hat-trick from Kylian Mbappe's substitute Ousmane Dembele. Manager Stale Solbakken cited player fatigue and medical advice as the reason for the extensive rotation, while acknowledging fan disappointment at missing star players like Haaland and Martin Ødegaard.
+
+📰 Clip-Ons Are Wireless Earbuds’ Next Inescapable Trend
+👉 Clip-on wireless earbuds are becoming increasingly popular due to their comfort and open-ear design, with major brands like Samsung, Bose, and Sony releasing or developing their own versions. These earbuds offer good audio quality and situational awareness, though they lack active noise cancellation.
+
+📰 Are we ready to host the FIFA World Cup, and who can afford to go?
+👉 The FIFA World Cup begins this week across the U.S., Canada, and Mexico, featuring 48 teams and over 5 million tickets sold to international travelers. However, the tournament faces challenges including logistical issues, political tensions, health concerns, and criticism over FIFA's ticketing practices and pricing.
+
+📰 AI search grounded in Facebook posts? What could go wrong?
+👉 Meta has launched AI Mode in Facebook search that uses public posts from Facebook Groups and Instagram Reels to answer complex queries, but concerns remain about the reliability of information sourced from user-generated content on the platform. While the feature aims to help with trip planning and local event discovery, early testing suggests it struggles with accuracy despite avoiding outright misinformation.
 
 
-#redhat #npmsupplychainattack #shai-huludmalware #cybersecurity #softwaresecurity #developersecurity #npmpackages #supplychainsecurity #malwareinfection #githubcompromise
+#chinaethnicunitylaw #overseasdissidents #serenawilliamswimbledonreturn #knicksnbafinalscomeback #destiny2finalupdate #bungiemonumentsoftriumph #arlingtonnationalcemeteryhorses #norwayfootballhaalandrested #cliponwirelessearbuds #fifaworldcup2026

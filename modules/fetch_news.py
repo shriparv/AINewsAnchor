@@ -382,7 +382,7 @@ def fetch_articles(retries=3, delay=5):
         all_raw_articles = []
         cat_lower = selected_cat.lower()
         params = {
-            "language": "en",
+            "language": config.NEWS_LANGUAGE,
             "pageSize": fetch_count_per_cat,
             "apiKey": config.NEWS_API_KEY
         }
@@ -438,7 +438,7 @@ def fetch_articles(retries=3, delay=5):
     # Try one more pass to collect bits from everywhere
     for selected_cat in shuffled_cats:
         # (This is a simplified re-fetch or use cached, for now let's just do a final broad fetch)
-        params = {"language": "en", "pageSize": fetch_count_per_cat, "apiKey": config.NEWS_API_KEY, "q": "technology"}
+        params = {"language": config.NEWS_LANGUAGE, "pageSize": fetch_count_per_cat, "apiKey": config.NEWS_API_KEY, "q": "technology"}
         try:
             res = requests.get("https://newsapi.org/v2/everything", params=params, timeout=10)
             if res.status_code == 200:

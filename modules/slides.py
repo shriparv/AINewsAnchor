@@ -266,7 +266,7 @@ def create_intro_slide(articles):
 
     # Header
     title_font = load_font(BOLD_FONT_PATH, 80)
-    title_text = "TODAY'S TOP STORIES"
+    title_text = "आज की मुख्य खबरें" if getattr(config, "NEWS_LANGUAGE", "en") == "hi" else "TODAY'S TOP STORIES"
     tw = draw.textbbox((0, 0), title_text, font=title_font)[2]
     draw_styled_text(draw, ((sw - tw) // 2, 100), title_text, title_font, (0, 255, 200, 255))
 
@@ -333,8 +333,9 @@ def create_titles_slide(results):
     welcome_font = load_font(BOLD_FONT_PATH, 85)
     header_font = load_font(FONT_PATH, 45)
     
-    welcome_text = "WELCOME"
-    header_text = f"TODAY'S {len(results)} TOP STORIES"
+    is_hindi = getattr(config, "NEWS_LANGUAGE", "en") == "hi"
+    welcome_text = "स्वागत है" if is_hindi else "WELCOME"
+    header_text = f"आज की {len(results)} मुख्य खबरें" if is_hindi else f"TODAY'S {len(results)} TOP STORIES"
     
     ww = draw.textbbox((0, 0), welcome_text, font=welcome_font)[2]
     hw = draw.textbbox((0, 0), header_text, font=header_font)[2]

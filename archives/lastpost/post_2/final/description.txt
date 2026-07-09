@@ -1,19 +1,25 @@
 🔥 Daily Tech News Update! 🔥
 
-📰 1957 Mercedes-Benz 190SL at No Reserve
-👉 A 1957 Mercedes-Benz 190SL, refurbished and repainted in Strawberry with a replacement 1.9-liter engine and four-speed manual transmission, is being offered at no reserve by a BaT Local Partner in New York, featuring Burgundy leather upholstery, a beige convertible top, and Becker Mexico radio. Originally silver, the car underwent suspension and brake maintenance in 2016 and 2017 and comes with Connecticut registration.
+📰 Europe-made Punkt. MC03 "Sovereign Smartphone" is now available
+👉 The Europe-made Punkt. MC03 "Sovereign Smartphone," designed in Switzerland and assembled in Germany, is now shipping for 745 with modest hardware specs and a focus on its Swiss-developed AphyOS operating system. Despite lacking premium features expected at its price point, the device emphasizes privacy, longevity, and software sovereignty with three years of functionality updates and five years of security patches.
 
-📰 How to Survive Fashion Week? Ask Conan Gray (EXCLUSIVE)
-👉 Singer Conan Gray thrived at Milan Fashion Week by embracing caffeine and Giorgio Armanis oversized menswear, skipping the shirt for a bare-chested blazer look while staying energized with multiple cappuccinos and Diet Cokes.
+📰 Samsung Galaxy M47's key specs and launch date revealed
+👉 Samsung will launch the Galaxy M47 5G in India on June 29, featuring a 6.7-inch AMOLED display with 120Hz refresh rate, Corning Gorilla Glass Victus protection, LPDDR5X RAM, UFS 3.1 storage, and Android 16-based One UI 8.5 with six years of security updates. The device will include a 50MP triple-rear camera setup, 12MP front camera, 45W fast charging support, and will be available in Blaze Blue and Rogue Red.
 
-📰 devctl 1.0.0
-👉 The website requires JavaScript to be enabled in the browser to function properly, and users are advised to check their browser settings, disable ad blockers, or try a different browser if experiencing loading issues.
+📰 AIM: Building an Agentic Tier-2 SOC Analyst at Cisco Live AMER 2026
+👉 Cisco Live AMER 2026 featured the development of an agentic Tier-2 SOC analyst system designed to automate incident analysis using AI and local GPU compute, aiming to generate detailed HTML reports in minutes for faster human verification.
 
-📰 3000 miles in the boggo, petrol Mini
-👉 The latest petrol-powered Mini Cooper retains the same chassis and body structure as its 2013 predecessor, differing mainly in updated styling and interior features, while the electric version is an all-new model built in China. The ICE lineup simplifies choices with three trim levels and standardized equipment packages, available in three- or five-door configurations with 1.5-litre or 2.0-litre turbo engines.
+📰 Intezer helps SOC teams automate custom security tasks
+👉 Intezer has launched Custom Agents, enabling security teams to build their own AI agents within the platform to automate repetitive SOC tasks like incident reporting and threat hunting. The new capability allows customers to reduce manual work and customize automation for their specific security operations needs.
 
-📰 SONGZIO Spring/Summer 2027
-👉 Songzio's Spring/Summer 2027 collection, Impavide, explores dualities of tradition and innovation through sculptural silhouettes, asymmetric draping, and experimental fabric combinations including habotai silk and organza. The collection features armour-like layers, distorted tailoring, and the reinterpreted Git collar element, presenting an elegant fusion of protection and freedom.
+📰 How to Evaluate an AI SOC Platform in 2026: 6 Capabilities That Separate Leaders from Bolt-On AI solutions
+👉 AI SOC platforms are evaluated based on their ability to reduce investigation time, false positives, and analyst workload while maintaining predictable automation through AI agents that perform core SOC functions like detection, triage, investigation, and response. True AI SOC platforms differ from bolt-on AI solutions by using agents that operate on their own data foundation rather than merely summarizing alerts within legacy SIEM systems.
+
+📰 Galaxy M47 key specs, Tecno Camon Slim official, Week 26 in review
+👉 Samsung confirmed the Galaxy M47 5G will launch in India on June 29, featuring a 6.7-inch 120Hz AMOLED display, Snapdragon chipset, 6,000mAh battery with 45W charging, and 50MP main camera with OIS, along with six years of security updates. Tecno unveiled the Camon Slim with a 6.39mm profile, 6,000mAh battery, and IP68/IP69 water resistance, while Nothing revealed the Nothing Phone (4b) design and specs ahead of its July 7 global launch.
+
+📰 Cable to Cloud – A Product Engineer’s Journey Through the Cisco Live AMER 2026 SOC
+👉 A Cisco product engineer participated in the Cisco Live AMER 2026 Security Operations Center, gaining firsthand experience in real-time threat detection and contributing to the setup and operation of the portable "SOC in a Box" system. The event provided a unique opportunity to observe how their security products perform in live environments while supporting the core missions of protection, education, and innovation.
 
 
-#Mercedes-Benz190SL #classiccar #noreserveauction #BaTLocal #1957Mercedes #carauction #vintageMercedes #Strawberrypaint #Burgundyleather #convertiblecar
+#sovereignsmartphone #PunktMC03 #AphyOS #privacyphone #Swisssmartphone #Germanyassembled #SamsungGalaxyM47 #5Gsmartphone #AMOLEDdisplay #LPDDR5XRAM

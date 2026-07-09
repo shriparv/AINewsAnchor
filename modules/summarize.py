@@ -53,11 +53,12 @@ def summarize(title: str, text: str, short_mode: bool = False) -> str:
         raise ValueError("Input text is empty or blank.")
 
     sentence_rule = "exactly 1–2 short sentences" if short_mode else "exactly 2–4 short sentences"
+    language_rule = "in Hindi (हिंदी)" if getattr(config, "NEWS_LANGUAGE", "en") == "hi" else "in English"
 
     prompt = f"""You are an expert news editor. Your task is to write a clean, high-quality summary of the provided news article.
 
 STRICT STYLE RULES:
-- Write a concise, factual, and professional news summary.
+- Write a concise, factual, and professional news summary {language_rule}.
 - Focus ONLY on the core facts and key takeaways.
 - Keep it concise: {sentence_rule}.
 - NEVER use conversational filler, introductions, greetings, or meta-commentary (e.g., NEVER say "Here is the summary", "Good evening", or "I'm your host").
@@ -126,10 +127,12 @@ News Summary:"""
 def generate_video_metadata(news_summary_text: str):
     """Generates a catchy YouTube title and SEO tags based on all processed news."""
     
+    language_rule = "in Hindi (or Hinglish)" if getattr(config, "NEWS_LANGUAGE", "en") == "hi" else "in English"
+    
     prompt = f"""You are an expert YouTube SEO strategist.
     Based on the following news headlines and summaries, generate:
-    1. A single "hook" style YouTube title (max 100 chars, no quotes).
-    2. A list of 20-30 comma-separated SEO keywords (tags).
+    1. A single "hook" style YouTube title (max 100 chars, no quotes) {language_rule}.
+    2. A list of 20-30 comma-separated SEO keywords (tags) {language_rule}.
     
     Format your response EXACTLY like this:
     TITLE: [Insert catchy title here]

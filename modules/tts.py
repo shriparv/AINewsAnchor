@@ -5,6 +5,7 @@ import json
 import asyncio
 import random
 from langdetect import detect, LangDetectException
+import config
 from config import (
     TTS_PROVIDER,
     TTS_VOICE_KOKORO, TTS_VOICE_PIPER, TTS_VOICE_EDGE,
@@ -174,16 +175,20 @@ async def generate_tts(text: str, index: int, voice_override: str = None) -> tup
         provider = detect_provider(voice_override)
         voice = voice_override
     else:
-        provider = TTS_PROVIDER.lower()
-        if RANDOMIZE_VOICE and RANDOM_VOICE_POOL:
-            voice = random.choice(RANDOM_VOICE_POOL)
-            provider = detect_provider(voice)
-        elif RANDOMIZE_VOICE:
-            voice = get_random_voice(provider)
+        if getattr(config, "NEWS_LANGUAGE", "en") == "hi":
+            provider = "edge"
+            voice = random.choice([getattr(config, "TTS_VOICE_EDGE_HINDI_MALE", "hi-IN-MadhurNeural"), getattr(config, "TTS_VOICE_EDGE_HINDI_FEMALE", "hi-IN-SwaraNeural")]) if RANDOMIZE_VOICE else getattr(config, "TTS_VOICE_EDGE_HINDI_FEMALE", "hi-IN-SwaraNeural")
         else:
-            if provider == "kokoro": voice = TTS_VOICE_KOKORO
-            elif provider == "piper": voice = TTS_VOICE_PIPER
-            else: voice = TTS_VOICE_EDGE
+            provider = TTS_PROVIDER.lower()
+            if RANDOMIZE_VOICE and RANDOM_VOICE_POOL:
+                voice = random.choice(RANDOM_VOICE_POOL)
+                provider = detect_provider(voice)
+            elif RANDOMIZE_VOICE:
+                voice = get_random_voice(provider)
+            else:
+                if provider == "kokoro": voice = TTS_VOICE_KOKORO
+                elif provider == "piper": voice = TTS_VOICE_PIPER
+                else: voice = TTS_VOICE_EDGE
 
     try:
         if provider == "kokoro":

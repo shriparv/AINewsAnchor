@@ -1,19 +1,34 @@
 🔥 Daily Tech News Update! 🔥
 
-📰 Control AirPods & Galaxy Buds on Ubuntu with ‘BudsLink’
-👉 BudsLink is a new Linux app that enables desktop control of Bluetooth earbuds from Apple, Samsung, Sony, and Nothing, offering features like battery level monitoring, noise cancellation, and ambient sound modes directly on Ubuntu without requiring mobile apps. The GTK4/libadwaita application communicates with devices over L2CAP and RFCOMM sockets through BlueZ, providing broader hardware support than similar tools like LibrePods.
+📰 New Model Context Protocol beta SDKs enable stateless AI agent scaling
+👉 The new Model Context Protocol beta SDKs introduce stateless AI agent scaling through routable transport headers and enhanced security features, with backward compatibility maintained for legacy systems. Developers can now test the 2.0 beta versions for Python and TypeScript, ahead of the final enterprise-ready specification launch on July 28, 2026.
 
-📰 Ubuntu and Ubuntu Pro on Azure Cobalt 200 VMs
-👉 Microsoft announces preview of Azure Cobalt 200 VMs with second-generation Arm silicon, featuring day-one support for Ubuntu and Ubuntu Pro with seamless deployment, long-term security maintenance, and Kernel Livepatch capabilities.
+📰 Why current LLM costs are not sustainable
+👉 Companies like Uber, Microsoft, and Salesforce are grappling with unsustainable AI costs as frontier models like GPT-5.5 charge up to $30 per million output tokens, prompting efforts to reduce spending despite AI's productivity benefits. Declining performance gains, open-weight models, hardware improvements, and zero switching costs threaten the high pricing power of current AI labs.
 
-📰 KDE Plasma 6.7 released
-👉 KDE Plasma 6.7 introduces independent per-screen virtual desktops, a feature requested for over two decades, alongside a revived classic theme, HDR and ICC profile support, and performance improvements including Intel GPU enhancements. The release is dedicated to longtime KDE supporter Eric Laffoon and will be available to KDE Neon, Arch, and Kubuntu users in the coming days.
+📰 Port React Compiler to Rust
+👉 A pull request to port the React compiler to Rust was referenced in multiple commits between June and July 2026, though the current page load error prevents full details from being accessed. The pull request remains unassigned and has not yet been merged.
 
-📰 1.38 Millimeter Microcontroller
-👉 Texas Instruments' MSPM0C110x microcontrollers are ultra-low-power 32-bit MCUs based on the Arm Cortex-M0 core, featuring up to 24MHz performance, 16KB flash memory, 1KB SRAM, and integrated analog peripherals including a 12-bit ADC and temperature sensor. Designed for extended battery life, these cost-optimized MCUs support communication protocols like UART, SPI, and I2C, and operate across a wide temperature range from -40C to 125C.
+📰 Symbolicating a minified stack trace by hand: why source maps can't do it alone
+👉 A developer manually decodes a minified stack trace to demonstrate that source maps alone cannot accurately recover original function names, requiring the minified bundle itself for precise symbolication. This explains why error tracking platforms require both source maps and minified bundles for accurate stack trace reconstruction.
 
-📰 Ubuntu To Ship Newer AMD ROCm Updates Via SRUs
-👉 Canonical will ship newer AMD ROCm updates via stable release updates (SRUs) for Ubuntu 26.04 LTS, starting with ROCm 7.2, to provide timely support for AMD GPUs and new features without requiring a full Ubuntu release upgrade.
+📰 TypeScript 5.9: The strictInference Flag and Stable Decorator Metadata That Actually Matter
+👉 TypeScript 5.9 introduces a new strictInference compiler flag that catches unsafe type inferences previously missed by older flags, and graduates stable decorator metadata from experimental status. Developers should verify the flag's availability in their TypeScript version before implementation.
+
+📰 Proton Drive client is (finally) coming to Linux
+👉 Proton is developing a Linux desktop client for Proton Drive, built from the ground up using a new shared SDK that also improves performance across existing platforms. The company has not yet announced a release date or beta timeline for the Linux client.
+
+📰 Fusion Programming Language
+👉 Fusion is a programming language that enables developers to create reusable components for multiple target languages including C, C, C#, D, Java, JavaScript, Python, Swift, TypeScript, and OpenCL C from a single codebase. The language generates lightweight, human-readable code that adheres to target language conventions and requires no virtual machine or dependencies.
+
+📰 TypeScript 7.0 RC arrives with Go-based compiler and 10x speed boost
+👉 TypeScript 7.0 RC features a Go-based compiler with 10x performance improvements through parallelized parsing, type-checking, and emitting. The release introduces strict mode by default, drops ES5 target support, and includes a rebuilt file-watching system for better cross-platform development efficiency.
+
+📰 I stopped using cloud image editors after I found this self-hosted alternative
+👉 SnapOtter is an open-source, self-hosted image editing toolkit that consolidates essential image processing functions like resizing, cropping, compression, format conversion, and watermarking into a single Docker container. It offers a comprehensive alternative to cloud-based image editors while maintaining full control over data and processing.
+
+📰 Reviving an abandoned open-source project: 6 years of Atomic Calendar Revive
+👉 A developer revived the abandoned Atomic Calendar open-source project six years ago, transforming it into Atomic Calendar Revive with over 600 stars and 1,700 commits, now widely used in Home Assistant dashboards. The project demonstrates the challenges and rewards of maintaining popular open-source software long-term.
 
 
-#Ubuntu #BudsLink #AirPodsonLinux #GalaxyBudsLinux #KDEPlasma6.7 #UbuntuPro #AzureCobalt200 #ARMVMs #Linuxnews #BluetoothearbudsLinux
+#TypeScript #TypeScript7.0 #Go-basedcompiler #ReactCompilerRust #ModelContextProtocol #AIagentscaling #LLMcosts #ProtonDriveLinux #Fusionprogramminglanguage #SnapOtterimageeditor
