@@ -1,34 +1,19 @@
 🔥 Daily Tech News Update! 🔥
 
-📰 New Model Context Protocol beta SDKs enable stateless AI agent scaling
-👉 The new Model Context Protocol beta SDKs introduce stateless AI agent scaling through routable transport headers and enhanced security features, with backward compatibility maintained for legacy systems. Developers can now test the 2.0 beta versions for Python and TypeScript, ahead of the final enterprise-ready specification launch on July 28, 2026.
+📰 Starship carries Starlink satellites on key SpaceX test mission
+👉 SpaceX successfully conducted a key test mission, carrying Starlink satellites on its starship. The mission marks a significant step forward in the development of the company's satellite constellation.
 
-📰 Why current LLM costs are not sustainable
-👉 Companies like Uber, Microsoft, and Salesforce are grappling with unsustainable AI costs as frontier models like GPT-5.5 charge up to $30 per million output tokens, prompting efforts to reduce spending despite AI's productivity benefits. Declining performance gains, open-weight models, hardware improvements, and zero switching costs threaten the high pricing power of current AI labs.
+📰 Starlink's mobile ambitions could run into a wall of steel and concrete
+👉 Starlink's ambition to become a mainstream mobile carrier by 2027 faces skepticism from analyst Benedict Evans, who highlights the challenges of providing urban coverage, citing the difficulty of signals being blocked by steel and concrete structures.
 
-📰 Port React Compiler to Rust
-👉 A pull request to port the React compiler to Rust was referenced in multiple commits between June and July 2026, though the current page load error prevents full details from being accessed. The pull request remains unassigned and has not yet been merged.
+📰 SpaceX Agrees to Remove Temporary Gas Turbines at Colossus Data Center By 2027
+👉 SpaceX has agreed to remove the temporary gas turbines powering part of its Colossus AI data center complex in Mississippi, with the goal of completing the removal by July 2027. The company will begin the process by August, as it brings a permanent 1.2 gigawatt natural-gas power plant online.
 
-📰 Symbolicating a minified stack trace by hand: why source maps can't do it alone
-👉 A developer manually decodes a minified stack trace to demonstrate that source maps alone cannot accurately recover original function names, requiring the minified bundle itself for precise symbolication. This explains why error tracking platforms require both source maps and minified bundles for accurate stack trace reconstruction.
+📰 Tesla built a Starlink internet dish into its Cybercab robotaxi
+👉 Tesla has integrated a Starlink internet dish into its Cybercab robotaxi, enabling riders to access high-speed internet for streaming and productivity. This integration aims to address gaps in cellular coverage and support the company's expansion of its self-driving robotaxi service.
 
-📰 TypeScript 5.9: The strictInference Flag and Stable Decorator Metadata That Actually Matter
-👉 TypeScript 5.9 introduces a new strictInference compiler flag that catches unsafe type inferences previously missed by older flags, and graduates stable decorator metadata from experimental status. Developers should verify the flag's availability in their TypeScript version before implementation.
-
-📰 Proton Drive client is (finally) coming to Linux
-👉 Proton is developing a Linux desktop client for Proton Drive, built from the ground up using a new shared SDK that also improves performance across existing platforms. The company has not yet announced a release date or beta timeline for the Linux client.
-
-📰 Fusion Programming Language
-👉 Fusion is a programming language that enables developers to create reusable components for multiple target languages including C, C, C#, D, Java, JavaScript, Python, Swift, TypeScript, and OpenCL C from a single codebase. The language generates lightweight, human-readable code that adheres to target language conventions and requires no virtual machine or dependencies.
-
-📰 TypeScript 7.0 RC arrives with Go-based compiler and 10x speed boost
-👉 TypeScript 7.0 RC features a Go-based compiler with 10x performance improvements through parallelized parsing, type-checking, and emitting. The release introduces strict mode by default, drops ES5 target support, and includes a rebuilt file-watching system for better cross-platform development efficiency.
-
-📰 I stopped using cloud image editors after I found this self-hosted alternative
-👉 SnapOtter is an open-source, self-hosted image editing toolkit that consolidates essential image processing functions like resizing, cropping, compression, format conversion, and watermarking into a single Docker container. It offers a comprehensive alternative to cloud-based image editors while maintaining full control over data and processing.
-
-📰 Reviving an abandoned open-source project: 6 years of Atomic Calendar Revive
-👉 A developer revived the abandoned Atomic Calendar open-source project six years ago, transforming it into Atomic Calendar Revive with over 600 stars and 1,700 commits, now widely used in Home Assistant dashboards. The project demonstrates the challenges and rewards of maintaining popular open-source software long-term.
+📰 Elon Musk says SpaceX's AI revenue will outpace all its other products by next month
+👉 Elon Musk predicts that AI revenue at SpaceX will surpass all other revenue by September, with significant growth expected in the fourth quarter.
 
 
-#TypeScript #TypeScript7.0 #Go-basedcompiler #ReactCompilerRust #ModelContextProtocol #AIagentscaling #LLMcosts #ProtonDriveLinux #Fusionprogramminglanguage #SnapOtterimageeditor
+#SpaceX #Starlink #satelliteconstellation #satelliteinternet #ElonMusk #AIrevenue #Tesla #robotaxi #Cybercab #internetdish

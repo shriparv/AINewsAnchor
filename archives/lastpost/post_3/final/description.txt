@@ -1,34 +1,48 @@
 🔥 Daily Tech News Update! 🔥
 
-📰 Can China target critics abroad with its new 'ethnic unity' law?
-👉 China's new Ethnic Unity Law, which criminalizes actions deemed to split the country or undermine national unity, may enable the government to target critics living abroad, as illustrated by the detention of Zhang Yadi, a UK-based student arrested in China after expressing support for Tibetan rights online. The law formalizes Beijing's stance against separatism and could provide legal justification for actions against overseas dissidents.
+📰 Apple @ Work: What IDC’s latest shipments mean for the MacBook Neo and Air in the enterprise
+👉 According to IDC's latest PC shipment numbers, Apple is the only major computer manufacturer to post shipment growth, while overall device shipments decline by nearly 5 globally.
 
-📰 Carer who 'couldn't go on' not guilty of mother's murder
-👉 A carer who attempted suicide after strangling her mother on Christmas Eve has been found not guilty of murder.
+📰 Scientists discover the brain has a fast lane and slow lane for clearing waste
+👉 Scientists have discovered that the brain has a "fast lane" and "slow lane" for clearing waste during deep sleep, with the glymphatic system playing a key role in removing metabolic waste associated with diseases such as Alzheimer's. Researchers used artificial intelligence to overcome limitations in measuring brain fluid flow velocity, gaining a better understanding of this process.
 
-📰 120mph serves but movement a struggle - how did Williams' return go?
-👉 Serena Williams returned to competitive tennis at Wimbledon after a four-year absence, losing to Australia's Maya Joint 6-3, 6-7(6-8), 6-3 in a match that showcased glimpses of her former dominance but also highlighted her struggle with movement and consistency. Despite the loss, Williams showed flashes of her trademark power and competitive spirit, though she was ultimately outplayed by the younger Joint, who handled the pace well and regrouped effectively after a second-set tiebreak.
+📰 Reusable modular architecture enables flexible cognitive operations in the mouse brain and artificial recurrent networks
+👉 Researchers have developed a reusable modular architecture that enables flexible cognitive operations in both mouse brain and artificial recurrent networks, achieving high classifier accuracy for stimulus and choice information.
 
-📰 Knicks fans go wild as New York team makes biggest comeback in NBA Finals history
-👉 New York Knicks fans erupted in celebration after the team staged the biggest comeback in NBA Finals history, with Mayor Zohran Mamdani expressing his amazement on social media and Taylor Swift dancing with Knicks City Dancers while wearing a "Stevie Knicks" t-shirt.
+📰 Computation embodied in population geometry
+👉 Researchers in Nature Communications demonstrated that the collective dynamics of spiking neurons can create a low-dimensional shape, or neural manifold, which can be used to forecast computation with minimal training.
 
-📰 Bungie’s Last ‘Destiny 2’ Update Is a Bittersweet Blast
-👉 Bungie has released its final Destiny 2 update, "Monuments of Triumph," marking the end of nearly a decade of support for the shared-world shooter as the studio shifts focus to Marathon and other projects. The update features emotional farewells from key characters and teases unfinished storylines, including a cosmic showdown with the Winnower, while maintaining the franchise's optimistic tone with a "goodbye for now" sentiment.
+📰 Neural encoding of pain is robust within but unstable between individuals
+👉 Researchers used electroencephalography to investigate neural patterns underlying intra- and inter-individual variations in pain perception, finding that patterns of neural encoding differ fundamentally in their robustness. While neural patterns associated with inter-individual differences were repeatable over time but not replicable across cohorts, patterns underlying intra-individual fluctuations were robust both over time and across cohorts.
 
-📰 What Army horse soldiers go through in Arlington funeral training
-👉 US Army Caisson Detachment soldiers undergo rigorous 18-week training programs to master horsemanship skills required for conducting solemn funeral processions at Arlington National Cemetery, following a two-year suspension that ended in 2025 after horse welfare issues were addressed through enhanced training protocols developed with equestrian expert Chester Weber.
+📰 Convergent Evolution in Neural Representation Space: Emergent Order in Deep Belief Networks
+👉 Researchers investigate the organization of internal representations in Deep Belief Networks, finding that the unsupervised learning process leads to emergent ordering of neural representations, potentially reflecting the underlying data classes.
 
-📰 Rest your best or go strong? Norway face questions as Haaland left out
-👉 Norway rested Erling Haaland and made 10 changes for their final group game against France, who won 4-1 with a 25-minute hat-trick from Kylian Mbappe's substitute Ousmane Dembele. Manager Stale Solbakken cited player fatigue and medical advice as the reason for the extensive rotation, while acknowledging fan disappointment at missing star players like Haaland and Martin Ødegaard.
+📰 Can a Near-Death Experience Seem to Last for Years?
+👉 A near-death experience can seem to last for years, with some individuals reporting a subjective experience spanning decades, despite their physical body being non-responsive for a much shorter period. This phenomenon is widely documented across cultures and centuries, and while its objective truth is debated, the subjective experience is a key area of study in psychology.
 
-📰 Clip-Ons Are Wireless Earbuds’ Next Inescapable Trend
-👉 Clip-on wireless earbuds are becoming increasingly popular due to their comfort and open-ear design, with major brands like Samsung, Bose, and Sony releasing or developing their own versions. These earbuds offer good audio quality and situational awareness, though they lack active noise cancellation.
+📰 Could a computer scientist build a brain?
+👉 Computer scientist Stan Kerstjens and neuroscientist Anthony M. Zador pose the question of whether a computer scientist can build a brain, framing it as an engineering problem of writing a program for a single cell to wire itself into a brain.
 
-📰 Are we ready to host the FIFA World Cup, and who can afford to go?
-👉 The FIFA World Cup begins this week across the U.S., Canada, and Mexico, featuring 48 teams and over 5 million tickets sold to international travelers. However, the tournament faces challenges including logistical issues, political tensions, health concerns, and criticism over FIFA's ticketing practices and pricing.
+📰 University of Tennessee sues Anthropic over neural network technology
+👉 The University of Tennessee Research Foundation has sued Anthropic in Delaware federal court, alleging that the artificial-intelligence giant's AI systems infringe on patents related to neural networks and machine-learning technology inspired by neuroscience.
 
-📰 AI search grounded in Facebook posts? What could go wrong?
-👉 Meta has launched AI Mode in Facebook search that uses public posts from Facebook Groups and Instagram Reels to answer complex queries, but concerns remain about the reliability of information sourced from user-generated content on the platform. While the feature aims to help with trip planning and local event discovery, early testing suggests it struggles with accuracy despite avoiding outright misinformation.
+📰 5 Free Courses to Go From AI Beginner to Practitioner
+👉 Artificial intelligence learners can transition from beginners to practitioners through a free, five-course roadmap that covers classical algorithms and training large language models from scratch. The courses, verified to be free and practical, establish a mental model for how AI systems reason about problems, moving from classical AI logic to machine learning mathematics.
+
+📰 Swamp Thing 1989 #4 Preview: Baby's First Apocalypse
+👉 A preview of Swamp Thing 1989 #4 is released, featuring "Baby's First Apocalypse".
+
+📰 The Download: the next big thing in LLMs and how AI academic research is shifting
+👉 Researchers are addressing limitations in Large Language Models (LLMs) by proposing innovations to transform architecture, aiming to improve efficiency and performance.
+
+📰 Daily Deal: The Ultimate Python & Artificial Intelligence Bundle
+👉 The Ultimate Python and Artificial Intelligence Bundle offers 9 courses to enhance Python and AI skills, covering topics such as data pre-processing and visualization, artificial neural networks, and Keras framework usage.
+
+📰 How ADHD Stimulant Medications Really Work
+👉 A recent study from Washington University in St. Louis provides a clearer understanding of how stimulant medications, commonly prescribed for ADHD, work in the brain. The medications increase dopamine and norepinephrine levels, affecting attention, motivation, and executive functioning skills, leading to improved symptoms in approximately 70 percent of adults.
+
+📰 A Neural Network model of Cultural Evolution
 
 
-#chinaethnicunitylaw #overseasdissidents #serenawilliamswimbledonreturn #knicksnbafinalscomeback #destiny2finalupdate #bungiemonumentsoftriumph #arlingtonnationalcemeteryhorses #norwayfootballhaalandrested #cliponwirelessearbuds #fifaworldcup2026
+...[Content Truncated due to YouTube limits]

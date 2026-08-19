@@ -155,10 +155,12 @@ def get_last_scheduled_publish_at(youtube):
         print(f"⚠️ Warning: Could not fetch schedule ({e}). Defaulting to 4 hours from now.")
         return None
 
-def upload_video(file_path: str, title: str, description: str, tags: list, category_id="28", thumbnail_path=None):
+def upload_video(file_path: str, title: str, description: str, tags: list, category_id="28", thumbnail_path=None, article_count: int = None):
     """
     Uploads a video file automatically securely into the user's YouTube Studio.
     `category_id` 28 correlates to 'Science & Technology'.
+    `article_count` — when provided, triggers Sunday Digest scheduling if the
+    count exceeds config.SUNDAY_DIGEST_THRESHOLD.
     """
     import datetime
 
@@ -166,15 +168,22 @@ def upload_video(file_path: str, title: str, description: str, tags: list, categ
     if not youtube:
         return None
 
-    from modules.schedule import get_next_schedule_time
+    from modules.schedule import get_next_schedule_time, get_next_sunday_schedule_time
     
     # Calculate dynamic schedule using the Golden Strategy
     last_publish = get_last_scheduled_publish_at(youtube)
     now = datetime.datetime.now().astimezone()
     
     base_time = max(last_publish, now) if last_publish else now
-    schedule_time = get_next_schedule_time(base_time)
-    
+
+    # 📅 Sunday Digest: schedule for next Sunday if news volume is high
+    if article_count is not None and article_count > config.SUNDAY_DIGEST_THRESHOLD:
+        schedule_time = get_next_sunday_schedule_time(base_time)
+        print(f"📰 High news volume ({article_count} articles > threshold {config.SUNDAY_DIGEST_THRESHOLD}). "
+              f"Scheduling as Sunday Tech Digest on {schedule_time.strftime('%A, %b %d at %H:%M')}.")
+    else:
+        schedule_time = get_next_schedule_time(base_time)
+
     if last_publish:
         print(f"📅 Queue Found! Last video at {last_publish.strftime('%H:%M %p, %b %d')}. Next one at {schedule_time.strftime('%H:%M %p, %b %d')}.")
     else:

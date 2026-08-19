@@ -1,6 +1,7 @@
 from moviepy.editor import *
 import random
 import math
+import datetime
 
 from config import SLIDE_DURATION
 import config
@@ -269,12 +270,15 @@ def create_video(layered_slides, audios):
     except:
         has_gpu = False
 
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_path = f"output/final/technews_{timestamp}.mp4"
+
     if has_gpu:
         print("\n" + "="*50)
         print("🚀 VIDEO ENCODING: UTILIZING NVIDIA GPU (NVENC)")
         print("="*50 + "\n")
         final.write_videofile(
-            "output/final/technews.mp4",
+            output_path,
             fps=15,
             codec="h264_nvenc",
             audio_codec="aac",
@@ -295,7 +299,7 @@ def create_video(layered_slides, audios):
         print("   (NVIDIA GPU or NVENC drivers not detected)")
         print("!"*50 + "\n")
         final.write_videofile(
-            "output/final/technews.mp4",
+            output_path,
             fps=15,
             codec="libx264",
             audio_codec="aac",
@@ -307,3 +311,5 @@ def create_video(layered_slides, audios):
                 "-b:a", "128k"
             ]
         )
+
+    return output_path

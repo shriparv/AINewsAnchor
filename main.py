@@ -315,7 +315,7 @@ async def main():
 
     # ── 4. VIDEO GENERATION ──
     print(f"\n🚀 Creating Final Video ({len(final_layered_slides)} slides total)...")
-    create_video(final_layered_slides, final_audios)
+    video_path = create_video(final_layered_slides, final_audios)
 
     # ── 4. METADATA & UPLOAD ──
     for r in results:
@@ -358,11 +358,12 @@ async def main():
     
     # 📤 Upload to YouTube (returns ID and the calculated schedule time)
     youtube_res = upload_video(
-        file_path="output/final/technews.mp4",
+        file_path=video_path,
         title=final_title,
         description=desc_text,
         tags=final_tags,
-        thumbnail_path=thumbnail_image
+        thumbnail_path=thumbnail_image,
+        article_count=len(results)   # 📅 Triggers Sunday Digest if count > SUNDAY_DIGEST_THRESHOLD
     )
     
     video_id, schedule_time = youtube_res if youtube_res else (None, None)
@@ -370,7 +371,7 @@ async def main():
     # 📤 Upload to Facebook if enabled
     if config.UPLOAD_TO_FACEBOOK:
         upload_video_to_facebook(
-            file_path="output/final/technews.mp4",
+            file_path=video_path,
             title=final_title,
             description=desc_text,
             schedule_time=schedule_time  # Sync with YouTube time if available
@@ -386,10 +387,15 @@ async def main():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="AI News Anchor Video Generator")
     parser.add_argument("-n", "--num", type=int, help="Number of articles to process")
+    parser.add_argument("--lang", type=str, choices=["en", "hi"], help="Language for the video (en or hi)")
     args = parser.parse_args()
 
     if args.num:
         config.NUM_ARTICLES = args.num
         print(f"📌 Overriding NUM_ARTICLES: {config.NUM_ARTICLES}")
+
+    if args.lang:
+        config.NEWS_LANGUAGE = args.lang
+        print(f"📌 Overriding NEWS_LANGUAGE: {config.NEWS_LANGUAGE}")
 
     asyncio.run(main())

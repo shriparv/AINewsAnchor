@@ -2,7 +2,79 @@ import os
 import requests
 import config
 import datetime
-import random
+
+
+# Facebook accepts scheduled posts only within a bounded window.  Keep a small
+# margin below the documented 75-day limit so network/API clock differences do
+# not turn an otherwise valid timestamp into a rejected request.
+FACEBOOK_MIN_LEAD = datetime.timedelta(minutes=15)
+FACEBOOK_MAX_LEAD = datetime.timedelta(days=75, minutes=-5)
+
+
+def _as_utc(value):
+    """Return a datetime as timezone-aware UTC."""
+    if value.tzinfo is None:
+        # Existing callers may pass naive local datetimes.
+        value = value.replace(tzinfo=datetime.datetime.now().astimezone().tzinfo)
+    return value.astimezone(datetime.timezone.utc)
+
+
+def _facebook_schedule_time(schedule_time=None):
+    """Return a Facebook-valid scheduled publish datetime.
+
+    YouTube and Facebook have different scheduling limits.  A YouTube queue
+    date can therefore be valid for YouTube but invalid for Facebook.  When
+    that happens, calculate the next local Facebook slot instead of forwarding
+    the invalid date.
+    """
+    now = datetime.datetime.now(datetime.timezone.utc)
+    earliest = now + FACEBOOK_MIN_LEAD
+    latest = now + FACEBOOK_MAX_LEAD
+
+    if schedule_time is not None:
+        candidate = _as_utc(schedule_time)
+
+        if candidate > latest:
+            print(
+                "⚠️ Facebook schedule is too far in the future "
+                f"({candidate.isoformat()}); recalculating a valid slot."
+            )
+            from modules.schedule import get_next_schedule_time
+
+            candidate = _as_utc(get_next_schedule_time(now.astimezone()))
+        elif candidate < earliest:
+            candidate = earliest
+    else:
+        candidate = None
+
+    if candidate is None:
+        last_publish_ts = get_last_scheduled_publish_at(
+            config.FB_PAGE_ID, config.FB_PAGE_ACCESS_TOKEN
+        )
+
+        from modules.schedule import get_next_schedule_time
+
+        if last_publish_ts:
+            try:
+                last_publish_ts = int(last_publish_ts)
+            except (TypeError, ValueError):
+                last_publish_ts = None
+
+        base_time = now.astimezone()
+        if last_publish_ts:
+            queued_time = datetime.datetime.fromtimestamp(
+                last_publish_ts, tz=datetime.timezone.utc
+            )
+            # Do not let a stale/invalid Facebook queue push this upload past
+            # Facebook's maximum scheduling horizon.
+            if now < queued_time <= latest:
+                base_time = queued_time.astimezone()
+
+        candidate = _as_utc(get_next_schedule_time(base_time))
+        if candidate < earliest:
+            candidate = earliest
+
+    return candidate
 
 def get_last_scheduled_publish_at(page_id, access_token):
     """Fetches the furthest 'scheduled_publish_time' currently in the Facebook queue."""
@@ -45,28 +117,9 @@ def upload_video_to_facebook(file_path, title, description, schedule_time=None):
         return None
 
     # --- Scheduling Logic ---
-    if not schedule_time:
-        # Independent mode: Calculate based on current FB queue
-        last_publish_ts = get_last_scheduled_publish_at(config.FB_PAGE_ID, config.FB_PAGE_ACCESS_TOKEN)
-        now_ts = int(datetime.datetime.now().timestamp())
-        
-        from modules.schedule import get_next_schedule_time
-        
-        base_ts = max(last_publish_ts, now_ts) if last_publish_ts else now_ts
-        base_time = datetime.datetime.fromtimestamp(base_ts)
-        
-        schedule_time_obj = get_next_schedule_time(base_time)
-        schedule_time_ts = int(schedule_time_obj.timestamp())
-    else:
-        # Sync mode: Use provided datetime object
-        schedule_time_ts = int(schedule_time.timestamp())
-
-    # Ensure it's at least 15 mins in the future (FB requirement is 10 mins)
-    min_future = int(datetime.datetime.now().timestamp() + 900)
-    if schedule_time_ts < min_future:
-        schedule_time_ts = min_future
-
-    schedule_dt_str = datetime.datetime.fromtimestamp(schedule_time_ts).strftime('%H:%M %p, %b %d')
+    schedule_time_obj = _facebook_schedule_time(schedule_time)
+    schedule_time_ts = int(schedule_time_obj.timestamp())
+    schedule_dt_str = schedule_time_obj.astimezone().strftime('%I:%M %p, %b %d')
     print(f"🚀 Initiating Facebook Upload (Scheduled for {schedule_dt_str}): {title}...")
 
     # Truncate description to a reasonable length to avoid Facebook API errors
